@@ -2,7 +2,7 @@
  Final project ( workshop xv6-mac)
  
 ## Install
- brew install qemu
+ $ brew install qemu
 ## Compilation
  $ make 
 ## Run
