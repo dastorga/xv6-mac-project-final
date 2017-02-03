@@ -22,3 +22,5 @@
 #define SYS_close  21
 #define SYS_lseek  22
 #define SYS_isatty 23
+#define SYS_procstat 24 // New - number the system call procstat
+#define SYS_set_priority 25 // New: Add in proyect 2: new number for set_priority calls

@@ -100,6 +100,8 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_lseek(void);
 extern int sys_isatty(void);
+extern int sys_procstat(void); // New 
+extern int sys_set_priority(void); // New 
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -125,6 +127,8 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_lseek]   sys_lseek,
 [SYS_isatty]  sys_isatty,
+[SYS_procstat] sys_procstat, // New 
+[SYS_set_priority] sys_set_priority, // New
 };
 
 void

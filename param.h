@@ -10,4 +10,6 @@
 #define MAXARG       32  // max exec arguments
 #define LOGSIZE      10  // max data sectors in on-disk log
 
-#define QUANTUM		  6  // New - representation the quantum of ticks
+#define QUANTUM		  6  // New: Add in proyect 0: representation the quantum of ticks
+#define MLF_LEVELS    4  // New: Add in proyect 2: Levels
+#define SIZEMLF       4  // New: Add in proyect 2: size mlf

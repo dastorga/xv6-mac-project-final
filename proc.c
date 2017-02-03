@@ -7,10 +7,17 @@
 #include "proc.h"
 #include "spinlock.h"
 
+struct node { // New: Added in proyect 2: node
+  struct proc *first; 
+  struct proc *last; 
+};
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
-} ptable;
+  struct node mlf[SIZEMLF]; // New: Added in proyect 2: array of process priority level
+} ptable; 
+
 
 static struct proc *initproc;
 
@@ -19,6 +26,64 @@ extern void forkret(void);
 extern void trapret(void);
 
 static void wakeup1(void *chan);
+
+void
+enqueue(struct proc *p) // New: Added in proyect 2
+{
+  struct proc *prev;
+  if(p->priority>=0 && p->priority<MLF_LEVELS){
+    //if priority level is empty (there is no proc)
+    if(ptable.mlf[p->priority].first == 0){
+      ptable.mlf[p->priority].first=p; //set first
+      ptable.mlf[p->priority].last=p; //set last
+      p->next=0;  //set next in "null"
+    }else{
+      prev=ptable.mlf[p->priority].last;//get previous last
+      prev->next=p; //set new proc as next of previous last
+      ptable.mlf[p->priority].last=p; //refresh last
+      p->next=0;
+    }
+  }else{
+    cprintf("ERROR ENQUEUE\n");
+  }
+}
+
+struct proc *
+dequeue(int priority) // New: Added in proyect 2
+{
+  struct proc *res; // result pointer
+  // save first proc of the list
+  res=ptable.mlf[priority].first;
+  // when a proc is dequeued, refresh first element of the priority level
+  ptable.mlf[priority].first=ptable.mlf[priority].first->next;
+  res->next=0;
+  return res;
+}
+
+int
+isempty(int priority) // New: Added in proyect 2
+{
+  if(ptable.mlf[priority].first!=0){
+    return 0;
+  }
+  return 1;
+}
+
+void
+makerunnable(struct proc *p, int priority) // New: Added in proyect 2
+// level can be: 0, 1, -1
+{
+  if (priority==1 && p->priority<SIZEMLF-1)
+  {
+    p->priority++;
+  }
+  if (priority==-1 && p->priority>0)
+  {
+    p->priority--;
+  }
+  p->state = RUNNABLE;
+  enqueue(p);
+}
 
 void
 pinit(void)
@@ -48,6 +113,8 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   release(&ptable.lock);
+
+  p->priority=0; // New: Added in proyect 2: set priority in zero 
 
   // Allocate kernel stack.
   if((p->kstack = kalloc()) == 0){
@@ -99,7 +166,9 @@ userinit(void)
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
-  p->state = RUNNABLE;
+  // p->state = RUNNABLE;
+  makerunnable(p,0); // New: Added in proyect 2: enqueue proc
+
 }
 
 // Grow current process's memory by n bytes.
@@ -155,7 +224,8 @@ fork(void)
   np->cwd = idup(proc->cwd);
  
   pid = np->pid;
-  np->state = RUNNABLE;
+  // np->state = RUNNABLE;
+  makerunnable(np,0); // New: Added in proyect 2: every process enqueued is RUNNABLE
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;
 }
@@ -257,6 +327,7 @@ wait(void)
 void
 scheduler(void)
 {
+  int i; // New: Added in project 2
   struct proc *p;
 
   for(;;){
@@ -265,15 +336,30 @@ scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
-    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->state != RUNNABLE)
-        continue;
+    // for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    //   if(p->state != RUNNABLE)
+    //     continue; // continue, move pointer
+
+    // Set pointer p in zero (null)
+    p=0;
+    // Loop over MLF table looking for process to run.
+    for(i=0; i<MLF_LEVELS; i++){
+      if(!isempty(i)){
+        // New - when a proc state changes to RUNNING it must be dequeued
+        p=dequeue(i);
+        break;
+      }
+    }
+
+    // If pointer not null (RUNNABLE proccess found)
+    if (p) {
+      proc = p;
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
       // proc = p; 
-      proc = p; // p->state == RUNNABLE
+      // proc = p; // p->state == RUNNABLE
       switchuvm(p);
       p->state = RUNNING;
       p->ticksProc = 0;  // New - when a proccess takes control, set ticksCounter on zero
@@ -315,8 +401,13 @@ void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
-  proc->state = RUNNABLE;
-  sched();
+  // proc->state = RUNNABLE;
+  // sched();
+  if(proc->priority<3){ 
+    proc->priority++;
+  }
+  makerunnable(proc,1); // New: Added in proyect 2: enqueue proc
+  sched(); 
   release(&ptable.lock);
 }
 
@@ -365,6 +456,10 @@ sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   proc->chan = chan;
   proc->state = SLEEPING;
+  // New -  when a proc goes to SLEEPING state, increase priority
+  if(proc->priority > 0){ // New: Added in proyect 2
+    proc->priority--;
+  }
   sched();
 
   // Tidy up.
@@ -386,8 +481,12 @@ wakeup1(void *chan)
   struct proc *p;
 
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-    if(p->state == SLEEPING && p->chan == chan)
-      p->state = RUNNABLE;
+    // if(p->state == SLEEPING && p->chan == chan)
+    //   p->state = RUNNABLE;
+    if(p->state == SLEEPING && p->chan == chan){ // Added in project 2
+      // New - enqueue proc
+      makerunnable(p,-1);
+    }
 }
 
 // Wake up all processes sleeping on chan.
@@ -412,8 +511,12 @@ kill(int pid)
     if(p->pid == pid){
       p->killed = 1;
       // Wake process from sleep if necessary.
-      if(p->state == SLEEPING)
-        p->state = RUNNABLE;
+      // if(p->state == SLEEPING)
+      //   p->state = RUNNABLE;
+      if(p->state == SLEEPING){ // Added in proyect 2
+        // New - enqueue proc
+        makerunnable(p,0);
+      }
       release(&ptable.lock);
       return 0;
     }
@@ -449,7 +552,8 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %s %s", p->pid, state, p->name);
+    // cprintf("%d %s %s", p->pid, state, p->name);
+    cprintf("%d %s %s %d", p->pid, state, p->name, p->priority);
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)

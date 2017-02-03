@@ -88,3 +88,19 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// New: Add in proyect 1: implementation of system call procstat
+int
+sys_procstat(void){             
+  procdump(); // Print a process listing to console.
+  return 0; 
+}
+
+// New: Add in proyect 2: implementation of syscall set_priority
+int
+sys_set_priority(void){
+  int pr;
+  argint(0, &pr);
+  proc->priority=pr;
+  return 0;
+}
