@@ -6,6 +6,8 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "semaphore.h" // New: Add in project final
+#include "sharedmem.h" // New: Add in project final
 
 struct node { // New: Added in proyect 2: node
   struct proc *first; 
@@ -89,6 +91,7 @@ void
 pinit(void)
 {
   initlock(&ptable.lock, "ptable");
+  shm_init(); // New: Add in project final
 }
 
 //PAGEBREAK: 32
@@ -224,6 +227,12 @@ fork(void)
   np->cwd = idup(proc->cwd);
  
   pid = np->pid;
+
+  //init array of sharedmem
+  for (i = 0; i < MAXSHMPROC; i++){
+    np->shmref[i] = 0;
+  }
+
   // np->state = RUNNABLE;
   makerunnable(np,0); // New: Added in proyect 2: every process enqueued is RUNNABLE
   safestrcpy(np->name, proc->name, sizeof(proc->name));
@@ -237,7 +246,7 @@ void
 exit(void)
 {
   struct proc *p;
-  int fd;
+  int fd, sd, i;
 
   if(proc == initproc)
     panic("init exiting");
@@ -250,8 +259,21 @@ exit(void)
     }
   }
 
+  //Delete all semaphores
+  for(sd = 0; sd < MAXSEMPROC; sd++){
+    if(proc->procsem[sd]){
+      semfree(proc->procsem[sd] - getstable());
+    }
+  }
+
   iput(proc->cwd);
   proc->cwd = 0;
+
+  //free shared memory
+  for(i = 0; i < MAXSHMPROC; i++){
+    if (proc->shmref[i] != 0){}
+      shm_close(i);
+  }
 
   acquire(&ptable.lock);
 
