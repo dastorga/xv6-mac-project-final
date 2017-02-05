@@ -6,6 +6,7 @@
 #include "proc.h"
 #include "x86.h"
 #include "syscall.h"
+#include "semaphore.h"
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
@@ -102,6 +103,13 @@ extern int sys_lseek(void);
 extern int sys_isatty(void);
 extern int sys_procstat(void); // New 
 extern int sys_set_priority(void); // New 
+extern int sys_semget(void); // New: Add in project final - (semaphore)
+extern int sys_semfree(void); // New: Add in project final - (semaphore)
+extern int sys_semdown(void); // New: Add in project final - (semaphore)
+extern int sys_semup(void); // New: Add in project final - (semaphore)
+extern int sys_shm_create(void); // New: Add in project final
+extern int sys_shm_close(void); // New: Add in project final
+extern int sys_shm_get(void); // New: Add in project final
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,6 +137,13 @@ static int (*syscalls[])(void) = {
 [SYS_isatty]  sys_isatty,
 [SYS_procstat] sys_procstat, // New 
 [SYS_set_priority] sys_set_priority, // New
+[SYS_semget]  sys_semget, // New: Add in project final
+[SYS_semfree] sys_semfree, // New: Add in project final
+[SYS_semdown] sys_semdown, // New: Add in project final
+[SYS_semup]   sys_semup, // New: Add in project final
+[SYS_shm_create] sys_shm_create, // New: Add in project final
+[SYS_shm_close] sys_shm_close, // New: Add in project final
+[SYS_shm_get] sys_shm_get, // New: Add in project final
 };
 
 void

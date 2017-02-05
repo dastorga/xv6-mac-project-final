@@ -24,3 +24,10 @@
 #define SYS_isatty 23
 #define SYS_procstat 24 // New - number the system call procstat
 #define SYS_set_priority 25 // New: Add in proyect 2: new number for set_priority calls
+#define SYS_semget	   26 // New: Add in project final - (semaphore)
+#define SYS_semfree	   27 // New: Add in project final - (semaphore)
+#define SYS_semdown	   28 // New: Add in project final - (semaphore)
+#define SYS_semup  	   29 // New: Add in project final - (semaphore)
+#define SYS_shm_create 30 // New: Add in project final - (shared memory)
+#define SYS_shm_close  31 // New: Add in project final - (shared memory)
+#define SYS_shm_get    32 // New: Add in project final - (shared memory)

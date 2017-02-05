@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "semaphore.h"
 
 int
 sys_fork(void)
@@ -96,11 +97,51 @@ sys_procstat(void){
   return 0; 
 }
 
-// New: Add in proyect 2: implementation of syscall set_priority
+// New: Add in project 2: implementation of syscall set_priority
 int
 sys_set_priority(void){
   int pr;
   argint(0, &pr);
   proc->priority=pr;
   return 0;
+}
+
+// New: Add in project final - (semaphore)
+int
+sys_semget(void)
+{
+  int semid, init_value;
+  if( argint(1, &init_value) < 0 || argint(0, &semid) < 0)
+    return -1;
+  return semget(semid,init_value);
+}
+
+// New: Add in project final - (semaphore)
+int 
+sys_semfree(void)
+{
+  int semid;
+  if(argint(0, &semid) < 0)
+    return -1;
+  return semfree(semid);
+}
+
+// New: Add in project final - (semaphore)
+int 
+sys_semdown(void)
+{
+  int semid;
+  if(argint(0, &semid) < 0)
+    return -1;
+  return semdown(semid);
+}
+
+// New: Add in project final - (semaphore)
+int 
+sys_semup(void)
+{
+  int semid;
+  if(argint(0, &semid) < 0)
+    return -1;
+  return semup(semid);
 }
