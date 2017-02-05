@@ -11,6 +11,12 @@ extern char data[];  // defined by kernel.ld
 pde_t *kpgdir;  // for use in scheduler()
 struct segdesc gdt[NSEGS];
 
+// New: Add in project final - (shared memory)
+struct sharedmemory {
+  char* addr;    //shared memory address
+  int refcount; //quantity of references
+};
+
 // Set up CPU's kernel segment descriptors.
 // Run once on entry on each CPU.
 void
@@ -67,7 +73,8 @@ walkpgdir(pde_t *pgdir, const void *va, int alloc)
 // Create PTEs for virtual addresses starting at va that refer to
 // physical addresses starting at pa. va and size might not
 // be page-aligned.
-static int
+// retornaba "static int" lo cambie por int, si no me saltaba error
+int
 mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
 {
   char *a, *last;
@@ -251,10 +258,12 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
 {
   pte_t *pte;
   uint a, pa;
+  int save_this = 1; // New: Add in project final 
 
   if(newsz >= oldsz)
     return oldsz;
 
+  //pte_s
   a = PGROUNDUP(newsz);
   for(; a  < oldsz; a += PGSIZE){
     pte = walkpgdir(pgdir, (char*)a, 0);
@@ -262,11 +271,17 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       a += (NPTENTRIES - 1) * PGSIZE;
     else if((*pte & PTE_P) != 0){
       pa = PTE_ADDR(*pte);
+      save_this = is_shared(pa); //New: Add in project final
       if(pa == 0)
         panic("kfree");
-      char *v = p2v(pa);
-      kfree(v);
-      *pte = 0;
+      // char *v = p2v(pa);
+      // kfree(v);
+      // *pte = 0;
+      if (!save_this){ // New: Add in project final
+        char *v = p2v(pa);
+        kfree(v);
+        *pte = 0;
+      }
     }
   }
   return newsz;
@@ -313,6 +328,7 @@ copyuvm(pde_t *pgdir, uint sz)
   pte_t *pte;
   uint pa, i, flags;
   char *mem;
+  int only_map; // New: Add in project final
 
   if((d = setupkvm()) == 0)
     return 0;
@@ -323,11 +339,18 @@ copyuvm(pde_t *pgdir, uint sz)
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
     flags = PTE_FLAGS(*pte);
-    if((mem = kalloc()) == 0)
-      goto bad;
-    memmove(mem, (char*)p2v(pa), PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)
-      goto bad;
+
+    only_map = is_shared(pa); // New: Add in project final
+    if (!only_map) { 
+      if((mem = kalloc()) == 0)
+        goto bad;
+      memmove(mem, (char*)p2v(pa), PGSIZE);
+      if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)
+        goto bad;
+    } else {
+      if(mappages(d, (void*)i, PGSIZE, pa, flags) < 0)
+        goto bad;
+     }
   }
   return d;
 
@@ -375,4 +398,18 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
     va = va0 + PGSIZE;
   }
   return 0;
+}
+
+int
+is_shared(uint pa){
+  int i;
+  struct sharedmemory* shared_table = getshmtable();
+  int shared= 0;
+  for(i=0; i< MAXSHM; i++){ 
+    if (p2v(pa) == shared_table[i].addr && shared_table[i].refcount > 0){
+    shared = i+1;
+    break;
+    }
+  }
+  return shared;
 }
