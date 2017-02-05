@@ -26,6 +26,13 @@ int lseek(int, int, int);
 int isatty(int);
 int procstat(void); // New: Add in proyect 1: new system calls
 int set_priority(int priority); // New: Add in proyect 2: new set_priority calls
+int semget(int sem_id, int init_value); // New: Add in project final - (semaphore)
+int semfree(int sem_id); // New: Add in project final - (semaphore)
+int semdown(int sem_id); // New: Add in project final - (semaphore)
+int semup(int sem_id); // New: Add in project final - (semaphore)
+int shm_create(); // New: Add in project final - (shared memory)
+int shm_close(int); // New: Add in project final - (shared memory)
+int shm_get(int, char**); // New: Add in project final - (shared memory)
 
 // ulib.c
 int stat(char*, struct stat*);
