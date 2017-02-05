@@ -39,7 +39,7 @@ forktest(void)
   int n, pid;
 
   printf(1, "fork test\n");
-  2f:	c7 44 24 04 3c 04 00 	movl   $0x43c,0x4(%esp)
+  2f:	c7 44 24 04 74 04 00 	movl   $0x474,0x4(%esp)
   36:	00 
   37:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   3e:	e8 bd ff ff ff       	call   0 <printf>
@@ -51,7 +51,7 @@ forktest(void)
   4c:	83 7d f4 04          	cmpl   $0x4,-0xc(%ebp)
   50:	7e 19                	jle    6b <forktest+0x42>
       printf(1,"new system call procstat\n");
-  52:	c7 44 24 04 47 04 00 	movl   $0x447,0x4(%esp)
+  52:	c7 44 24 04 7f 04 00 	movl   $0x47f,0x4(%esp)
   59:	00 
   5a:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   61:	e8 9a ff ff ff       	call   0 <printf>
@@ -85,7 +85,7 @@ forktest(void)
     printf(1, "fork claimed to work N times!\n", N);
   9c:	c7 44 24 08 e8 03 00 	movl   $0x3e8,0x8(%esp)
   a3:	00 
-  a4:	c7 44 24 04 64 04 00 	movl   $0x464,0x4(%esp)
+  a4:	c7 44 24 04 9c 04 00 	movl   $0x49c,0x4(%esp)
   ab:	00 
   ac:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   b3:	e8 48 ff ff ff       	call   0 <printf>
@@ -99,7 +99,7 @@ forktest(void)
   c2:	85 c0                	test   %eax,%eax
   c4:	79 19                	jns    df <forktest+0xb6>
       printf(1, "wait stopped early\n");
-  c6:	c7 44 24 04 83 04 00 	movl   $0x483,0x4(%esp)
+  c6:	c7 44 24 04 bb 04 00 	movl   $0x4bb,0x4(%esp)
   cd:	00 
   ce:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   d5:	e8 26 ff ff ff       	call   0 <printf>
@@ -117,7 +117,7 @@ forktest(void)
   ed:	83 f8 ff             	cmp    $0xffffffff,%eax
   f0:	74 19                	je     10b <forktest+0xe2>
     printf(1, "wait got too many\n");
-  f2:	c7 44 24 04 97 04 00 	movl   $0x497,0x4(%esp)
+  f2:	c7 44 24 04 cf 04 00 	movl   $0x4cf,0x4(%esp)
   f9:	00 
   fa:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  101:	e8 fa fe ff ff       	call   0 <printf>
@@ -126,7 +126,7 @@ forktest(void)
   }
   
   printf(1, "fork test OK\n");
- 10b:	c7 44 24 04 aa 04 00 	movl   $0x4aa,0x4(%esp)
+ 10b:	c7 44 24 04 e2 04 00 	movl   $0x4e2,0x4(%esp)
  112:	00 
  113:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  11a:	e8 e1 fe ff ff       	call   0 <printf>
@@ -640,3 +640,38 @@ memmove(void *vdst, void *vsrc, int n)
  432:	b8 19 00 00 00       	mov    $0x19,%eax
  437:	cd 40                	int    $0x40
  439:	c3                   	ret    
+
+0000043a <semget>:
+ 43a:	b8 1a 00 00 00       	mov    $0x1a,%eax
+ 43f:	cd 40                	int    $0x40
+ 441:	c3                   	ret    
+
+00000442 <semfree>:
+ 442:	b8 1b 00 00 00       	mov    $0x1b,%eax
+ 447:	cd 40                	int    $0x40
+ 449:	c3                   	ret    
+
+0000044a <semdown>:
+ 44a:	b8 1c 00 00 00       	mov    $0x1c,%eax
+ 44f:	cd 40                	int    $0x40
+ 451:	c3                   	ret    
+
+00000452 <semup>:
+ 452:	b8 1d 00 00 00       	mov    $0x1d,%eax
+ 457:	cd 40                	int    $0x40
+ 459:	c3                   	ret    
+
+0000045a <shm_create>:
+ 45a:	b8 1e 00 00 00       	mov    $0x1e,%eax
+ 45f:	cd 40                	int    $0x40
+ 461:	c3                   	ret    
+
+00000462 <shm_close>:
+ 462:	b8 1f 00 00 00       	mov    $0x1f,%eax
+ 467:	cd 40                	int    $0x40
+ 469:	c3                   	ret    
+
+0000046a <shm_get>:
+ 46a:	b8 20 00 00 00       	mov    $0x20,%eax
+ 46f:	cd 40                	int    $0x40
+ 471:	c3                   	ret    

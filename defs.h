@@ -117,6 +117,20 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 
+// New: Add in project final - semaphore.c
+int 			semget(int sem_id, int init_value);
+int 			semfree(int sem_id);
+int 			semdown(int sem_id);
+int 			semup(int sem_id);
+struct sem*		getstable();
+
+// New: Add in project final - sharedmem.c
+int                    shm_init();
+int                    shm_close(int key);
+int                    shm_create();
+int                    shm_get(int key, char** addr);
+struct sharedmemory*   getshmtable();
+
 // swtch.S
 void            swtch(struct context**, struct context*);
 
@@ -176,6 +190,7 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+int             is_shared(uint pa); //New: Add in project final - (shared memory)
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

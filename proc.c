@@ -266,7 +266,9 @@ exit(void)
     }
   }
 
+  begin_op(); //add hoy dario, no estoy seguro
   iput(proc->cwd);
+  end_op(); //add hoy dario, no estoy seguro
   proc->cwd = 0;
 
   //free shared memory
