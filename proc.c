@@ -30,6 +30,13 @@ extern void trapret(void);
 static void wakeup1(void *chan);
 
 void
+pinit(void)
+{
+  initlock(&ptable.lock, "ptable");
+  shm_init(); // New: Add in project final
+}
+
+void
 enqueue(struct proc *p) // New: Added in proyect 2
 {
   struct proc *prev;
@@ -85,13 +92,6 @@ makerunnable(struct proc *p, int priority) // New: Added in proyect 2
   }
   p->state = RUNNABLE;
   enqueue(p);
-}
-
-void
-pinit(void)
-{
-  initlock(&ptable.lock, "ptable");
-  shm_init(); // New: Add in project final
 }
 
 //PAGEBREAK: 32
@@ -265,6 +265,8 @@ exit(void)
       semfree(proc->procsem[sd] - getstable());
     }
   }
+
+  proc->shmemquantity = 0;
 
   begin_trans(); //add hoy dario, no estoy seguro // begin_op en linux creo
   iput(proc->cwd);
