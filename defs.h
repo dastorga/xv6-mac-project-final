@@ -190,7 +190,8 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
-int             is_shared(uint pa); //New: Add in project final - (shared memory)
+int             mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm); // New: Add in project final - (shared memory)
+int             is_shared(uint pa); // New: Add in project final - (shared memory)
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

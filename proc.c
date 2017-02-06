@@ -266,9 +266,9 @@ exit(void)
     }
   }
 
-  begin_op(); //add hoy dario, no estoy seguro
+  begin_trans(); //add hoy dario, no estoy seguro // begin_op en linux creo
   iput(proc->cwd);
-  end_op(); //add hoy dario, no estoy seguro
+  commit_trans(); //add hoy dario, no estoy seguro
   proc->cwd = 0;
 
   //free shared memory
