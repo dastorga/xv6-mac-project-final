@@ -13,8 +13,11 @@ struct spinlock lock;
 struct sem sem[MAXSEM]; // atrib. (value,refcount) (MAXSEM = 16)
 } stable;
 
+// proc->procsem es la lista de semaforos por proceso
+// MAXSEMPROC = 4 es la cantidad de semaforos por proceso
 struct sem** checkprocsem(){
 struct sem **r;
+	// a "r" le asigno el arreglo de la list of semaphores del proceso
 	for (r = proc->procsem; r < proc->procsem + MAXSEMPROC; r++) {
 		if (*r == 0)
 			return r;
@@ -34,7 +37,7 @@ int semget(int sem_id, int init_value){
 	static int first_time = 1;
 
 	if (first_time) {
-		initlock(&stable.lock, "stable");
+		initlock(&stable.lock, "stable"); // begin the mutual exclusion
 		first_time = 0;
 	}
 
@@ -46,10 +49,10 @@ int semget(int sem_id, int init_value){
 			if (*(r = checkprocsem()) == 0)
 				goto found;
 			release(&stable.lock);
-			return -2;
+			return -2; // el proceso ya obtuvo el numero maximo d semaforos
 		}
 		release(&stable.lock);
-		return -3;
+		return -3; // no ahi mas semaforos disponibles en el sistema
 
 		found:
 		s->value = init_value;
@@ -71,7 +74,7 @@ int semget(int sem_id, int init_value){
 		s = stable.sem + sem_id;
 		if (s->refcount == 0){
 			release(&stable.lock);
-			return -1;
+			return -1; // el semaforo con este "sem_id" no esta en uso 
 		}else if (*(r = checkprocsem()) == 0){
 			*r = s;
 			s->refcount++;
