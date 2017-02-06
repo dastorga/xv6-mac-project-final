@@ -15,6 +15,9 @@ OBJS = \
 	picirq.o\
 	pipe.o\
 	proc.o\
+	semaphore.o\
+	sharedmem.o\
+	syssharedmem.o\
 	spinlock.o\
 	string.o\
 	swtch.o\

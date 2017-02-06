@@ -9,6 +9,8 @@
 #include "sharedmem.h"
 #include "elf.h"
 
+// esta la termine definiendo en Makefile!!!!!!!! recordar
+
 //Creates a shared memory block.
 int
 sys_shm_create(void)

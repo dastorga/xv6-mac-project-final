@@ -9,11 +9,9 @@
 #define ROOTDEV       1  // device number of file system root disk
 #define MAXARG       32  // max exec arguments
 #define LOGSIZE      10  // max data sectors in on-disk log
-
 #define QUANTUM		  6  // New: Add in proyect 0: representation the quantum of ticks
 #define MLF_LEVELS    4  // New: Add in proyect 2: Levels
 #define SIZEMLF       4  // New: Add in proyect 2: size mlf
-
 #define MAXSEM		 16	 // New: Add in project final: semaphores per system
 #define MAXSEMPROC	  4	 // New: Add in project final: semaphores per process
 #define MAXPAGES      1  // New: maximum allocated pages

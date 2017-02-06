@@ -69,7 +69,6 @@ struct proc {
   int ticksProc;               // New: Added in project 0: number of ticks
   int priority;                // New: Added in project 2: priority of a process   
   struct proc *next;           // New: Added in project 2: pointer to next proc 
-
   struct sem *procsem[MAXSEMPROC];  // List of semaphores
   int shmem[MAXSHMPROC];            //spaces of shared memory used for this process 
   char* shmref[MAXSHMPROC];         //references of shared memory used for this process
