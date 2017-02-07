@@ -16,7 +16,7 @@ struct sem sem[MAXSEM]; // atrib. (value,refcount) (MAXSEM = 16)
 // proc->procsem es la lista de semaforos por proceso
 // MAXSEMPROC = 4 es la cantidad de semaforos por proceso
 struct sem** checkprocsem(){
-struct sem **r;
+	struct sem **r;
 	// a "r" le asigno el arreglo de la list of semaphores del proceso
 	for (r = proc->procsem; r < proc->procsem + MAXSEMPROC; r++) {
 		if (*r == 0)
@@ -29,6 +29,7 @@ struct sem* getstable(){
 	return stable.sem;
 }
 
+// crea u obtiene un descriptor de un semaforo existente
 int semget(int sem_id, int init_value){
 	// int i;
 	struct sem *t;
@@ -42,7 +43,7 @@ int semget(int sem_id, int init_value){
 	}
 
 	acquire(&stable.lock);
-	if (sem_id == -1) {
+	if (sem_id == -1) { // se desea crear un semaforo nuevo
 		for (t = stable.sem; t < stable.sem + MAXSEM; t++)
 		if (t->refcount == 0){
 			s = t;
@@ -70,11 +71,11 @@ int semget(int sem_id, int init_value){
 		release(&stable.lock);
 		return s - stable.sem;	
 
-	} else {
+	} else { // en caso de que NO se desea crear un semaforo nuevo
 		s = stable.sem + sem_id;
 		if (s->refcount == 0){
 			release(&stable.lock);
-			return -1; // el semaforo con este "sem_id" no esta en uso 
+			return -1; // el semaforo con ese "sem_id" no esta en uso 
 		}else if (*(r = checkprocsem()) == 0){
 			*r = s;
 			s->refcount++;
@@ -82,25 +83,28 @@ int semget(int sem_id, int init_value){
 			return sem_id;
 		}	else {
 			release(&stable.lock);
-			return -2;
+			return -2; // el proceso ya obtuvo el maximo de semaforos
+
 		}
 	}
 }
 
-
+// libera el semaforo.
+// como parametro toma un descriptor.
 int semfree(int sem_id){
 	struct sem *s;
 	struct sem **r;
 
 	s = stable.sem + sem_id;
-	if (s->refcount == 0)
-		return -1;
+	if (s->refcount == 0) // si no tiene ninguna referencia, entonces no esta en uso,	
+		return -1;		 //  y no es posible liberarlo, se produce un ERROR! 
 
+	// recorro todos los semaforos del proceso
 	for (r = proc->procsem; r < proc->procsem + MAXSEMPROC; r++) {
 		if (*r == s) {
 			*r = 0;
 			acquire(&stable.lock);
-			s->refcount--;
+			s->refcount--; // disminuyo el contador, debido a q es un semaforo q se va.
 			release(&stable.lock);
 			return 0;
 		}
