@@ -112,7 +112,7 @@ int semfree(int sem_id){
 	return -1;
 }
 
-
+// decrementa una unidad el valor del semaforo.
 int semdown(int sem_id){
 	struct sem *s;
 
@@ -122,10 +122,10 @@ int semdown(int sem_id){
 	if (s->refcount <= 0) {
 		release(&stable.lock);
 		// cprintf("SEMDOWN>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s, s->value, s->refcount);
-		return -1;
+		return -1; // error!!
 	}
 	while (s->value == 0)
-	sleep(s, &stable.lock);
+	sleep(s, &stable.lock); 
 
 	s->value--;
 	// cprintf("SEMDOWN>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s, s->value, s->refcount);
@@ -133,7 +133,7 @@ int semdown(int sem_id){
 	return 0;
 }
 
-
+// incrementa una unidad el valor del semaforo
 int semup(int sem_id){
 struct sem *s;
 
@@ -143,12 +143,12 @@ struct sem *s;
 	if (s->refcount <= 0) {
 		release(&stable.lock);
 		// cprintf("SEMUP>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s, s->value, s->refcount);
-		return -1;
+		return -1; // error, por que no ahi referencias en este semaforo.
 	}
 	if (s->value >= 0) {
 		if (s->value == 0){
 			s->value++;
-			wakeup(s);
+			wakeup(s); // despierto
 		}else
 			s->value++;
 			release(&stable.lock);

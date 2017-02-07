@@ -481,7 +481,7 @@ sleep(void *chan, struct spinlock *lk)
 
   // Go to sleep.
   proc->chan = chan;
-  proc->state = SLEEPING;
+  proc->state = SLEEPING; 
   // New -  when a proc goes to SLEEPING state, increase priority
   if(proc->priority > 0){ // New: Added in proyect 2
     proc->priority--;
