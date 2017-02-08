@@ -42,16 +42,17 @@ shm_create()
                                                 // si todo sale bien, me retorna como resultado un puntero (direccion) de donde 
                                                 // se encuentra alojada, a esta direccion la almaceno en "sharedmemory.addr".
                                                 // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
-      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); //
-      shmtable.sharedmemory[i].refcount++;
-      shmtable.quantity++;
+      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
+      shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0.
+      shmtable.quantity++; // Aqui indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
       release(&shmtable.lock);
-      return i;
+      return i; // retorno el indice (key) del arreglo en donde se encuentra el espacio de memoria compartida.
     } else
       ++i;
   }
   release(&shmtable.lock);
-  return -1;
+  //return proc->sharedmemory == MAXSHMPROC; // Consultar?: el proceso ya alcanzo el maximo de recursos posibles.
+  return -1; // no ahi mas recursos disponbles en el sistema.
 }
 
 //Frees the memory block previously obtained.
