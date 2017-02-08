@@ -31,15 +31,18 @@ int
 shm_create()
 { 
   acquire(&shmtable.lock);
-  if ( shmtable.quantity == MAXSHM ){
-    release(&shmtable.lock);
-    return -1; // no ahi mas espacios de memoria compartida, se fueron los 12 espacios que habia.
+  if ( shmtable.quantity == MAXSHM ){ // si la cantidad de espacios activos en sharedmemory es igual a 12
+    release(&shmtable.lock);         // es la logitud maxima del array sharedmemory, entonces:
+    return -1;                      // no ahi mas espacios de memoria compartida, se fueron los 12 espacios que habia.
   }
   int i = 0;
-  while (i<MAXSHM){
-    if (shmtable.sharedmemory[i].refcount == -1){
-      shmtable.sharedmemory[i].addr = kalloc();
-      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE);
+  while (i<MAXSHM){ // busco el primer espacio desocupado
+    if (shmtable.sharedmemory[i].refcount == -1){ // si es -1, esta desocupado el espacio.
+      shmtable.sharedmemory[i].addr = kalloc(); // El "kalloc" asigna una pagina de 4096 bytes de memoria fisica,
+                                                // si todo sale bien, me retorna como resultado un puntero (direccion) de donde 
+                                                // se encuentra alojada, a esta direccion la almaceno en "sharedmemory.addr".
+                                                // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
+      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); //
       shmtable.sharedmemory[i].refcount++;
       shmtable.quantity++;
       release(&shmtable.lock);
