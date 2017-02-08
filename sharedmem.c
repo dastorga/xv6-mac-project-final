@@ -8,12 +8,19 @@
 #include "spinlock.h"
 #include "sharedmem.h"
 
+// "shmtable" contiene:
+// struct {
+//   struct sharedmemory sharedmemory[MAXSHM]; // array from type sharedmemory
+//   struct spinlock lock;
+//   unsigned short quantity; //quantity of actives espaces of shared memory
+// } shmtable;
+
 int
 shm_init()
 {
   int i;
   initlock(&shmtable.lock, "shmtable");
-  for(i = 0; i<MAXSHM; i++){
+  for(i = 0; i<MAXSHM; i++){ //recorro el arreglo hasta los 12 espacios de memoria compartida del sistema.
     shmtable.sharedmemory[i].refcount = -1;
   }
   return 0;
