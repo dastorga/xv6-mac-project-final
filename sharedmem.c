@@ -20,8 +20,8 @@ shm_init()
 {
   int i;
   initlock(&shmtable.lock, "shmtable");
-  for(i = 0; i<MAXSHM; i++){ //recorro el arreglo hasta los 12 espacios de memoria compartida del sistema.
-    shmtable.sharedmemory[i].refcount = -1;
+  for(i = 0; i<MAXSHM; i++){ //recorro el arreglo hasta los MAXSHM=12 espacios de memoria compartida del sistema.
+    shmtable.sharedmemory[i].refcount = -1; // inician todos los espacios con su contador de referencia en -1.
   }
   return 0;
 }
@@ -33,7 +33,7 @@ shm_create()
   acquire(&shmtable.lock);
   if ( shmtable.quantity == MAXSHM ){
     release(&shmtable.lock);
-    return -1;
+    return -1; // no ahi mas espacios de memoria compartida, se fueron los 12 espacios que habia.
   }
   int i = 0;
   while (i<MAXSHM){
