@@ -53,22 +53,22 @@ enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
 // Per-process state
 struct proc {
-  uint sz;                     // Size of process memory (bytes)
-  pde_t* pgdir;                // Page table
-  char *kstack;                // Bottom of kernel stack for this process
-  enum procstate state;        // Process state
-  volatile int pid;            // Process ID
-  struct proc *parent;         // Parent process
-  struct trapframe *tf;        // Trap frame for current syscall
-  struct context *context;     // swtch() here to run process
-  void *chan;                  // If non-zero, sleeping on chan
-  int killed;                  // If non-zero, have been killed
-  struct file *ofile[NOFILE];  // Open files
-  struct inode *cwd;           // Current directory
-  char name[16];               // Process name (debugging)
-  int ticksProc;               // New: Added in project 0: number of ticks
-  int priority;                // New: Added in project 2: priority of a process   
-  struct proc *next;           // New: Added in project 2: pointer to next proc 
+  uint sz;                          // Size of process memory (bytes)
+  pde_t* pgdir;                     // Page table
+  char *kstack;                     // Bottom of kernel stack for this process
+  enum procstate state;             // Process state
+  volatile int pid;                 // Process ID
+  struct proc *parent;              // Parent process
+  struct trapframe *tf;             // Trap frame for current syscall
+  struct context *context;          // swtch() here to run process
+  void *chan;                       // If non-zero, sleeping on chan
+  int killed;                       // If non-zero, have been killed
+  struct file *ofile[NOFILE];       // Open files
+  struct inode *cwd;                // Current directory
+  char name[16];                    // Process name (debugging)
+  int ticksProc;                    // New: Added in project 0: number of ticks
+  int priority;                     // New: Added in project 2: priority of a process   
+  struct proc *next;                // New: Added in project 2: pointer to next proc 
   struct sem *procsem[MAXSEMPROC];  // New: Add in project 3: list of semaphores
   int shmem[MAXSHMPROC];            // New: Added in project final: spaces of shared memory used for this process 
   char* shmref[MAXSHMPROC];         // New: Added in project final: references of shared memory used for this process

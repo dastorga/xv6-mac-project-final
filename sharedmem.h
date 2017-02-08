@@ -4,9 +4,9 @@ struct sharedmemory {
 };
 
 struct {
-  struct sharedmemory sharedmemory[MAXSHM];
+  struct sharedmemory sharedmemory[MAXSHM]; // array from type sharedmemory
   struct spinlock lock;
   unsigned short quantity; //quantity of actives espaces of shared memory
 } shmtable;
-
+   
 struct sharedmemory* getshmtable();
