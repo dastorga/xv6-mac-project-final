@@ -228,7 +228,7 @@ fork(void)
  
   pid = np->pid;
 
-  //init array of sharedmem
+  // Init array of sharedmem
   for (i = 0; i < MAXSHMPROC; i++){
     np->shmref[i] = 0;
   }
@@ -273,7 +273,7 @@ exit(void)
   commit_trans(); //add hoy dario, no estoy seguro
   proc->cwd = 0;
 
-  //free shared memory
+  // Free shared memory
   for(i = 0; i < MAXSHMPROC; i++){
     if (proc->shmref[i] != 0){}
       shm_close(i);

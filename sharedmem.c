@@ -90,7 +90,7 @@ shm_get(int key, char** addr)
     return -1; // key invalida, debido a que esta fuera de los indices la key, o la referencia en ese espacio esta sin asignar.
   }  
   int i = 0;
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){  
+  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // si es diferente a 0 es por que existe una referencia
     i++;
   }
   if (i == MAXSHMPROC ){ // si agoto los 4 espacios que posee el proceso disponible, entonces..
@@ -99,7 +99,7 @@ shm_get(int key, char** addr)
   } else {  
             // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
     mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
-            // tabla de paginas del proceso, tamaño de la memoria del proceso, 
+            // tabla de pagina del proceso, tamaño de la memoria del proceso, PGSIZE, memoria fisica, permisos.
     proc->shmref[i] = shmtable.sharedmemory[key].addr; 
     shmtable.sharedmemory[key].refcount++;
     *addr = (char *)PGROUNDDOWN(proc->sz);
