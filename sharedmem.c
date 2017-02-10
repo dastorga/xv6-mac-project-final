@@ -51,7 +51,7 @@ shm_create()
       ++i;
   }
   release(&shmtable.lock);
-  //return proc->sharedmemory == MAXSHMPROC; // Consultar?: el proceso ya alcanzo el maximo de recursos posibles.
+  //return -2 si proc->sharedmemory == MAXSHMPROC; // Consultar?: el proceso ya alcanzo el maximo de recursos posibles.
   return -1; // no ahi mas recursos disponbles en el sistema.
 }
 
@@ -62,10 +62,10 @@ shm_close(int key)
   acquire(&shmtable.lock);  
   if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == -1){
     release(&shmtable.lock);
-    return -1;
+    return -1; // key invalidad por que no esta dentro de los indices (0 - 12), o en ese espacio esta vacio (refcount = -1)
   }
   int i = 0;
-  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){
+  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
     i++;
   }
   if (i == MAXSHMPROC){
