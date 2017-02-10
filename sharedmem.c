@@ -66,18 +66,18 @@ shm_close(int key)
   }
   int i = 0;
   while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
-    i++;
+    i++; // avanzo al proximo
   }
-  if (i == MAXSHMPROC){
+  if (i == MAXSHMPROC){ // quiere decir que alcazo a recorrer todos los espacios de memoria compartida del proceso.
     release(&shmtable.lock);
-    return -1;
-  }
-  shmtable.sharedmemory[key].refcount--;
-  if (shmtable.sharedmemory[key].refcount == 0){
-    shmtable.sharedmemory[key].refcount = -1;
+    return -1; 
+  }  
+  shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
+  if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
+    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo/
   }
   release(&shmtable.lock);
-  return 0;  
+  return 0;  // todo en orden
 }
 
 //Obtains the address of the memory block associated with key.
