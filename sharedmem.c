@@ -74,7 +74,7 @@ shm_close(int key)
   }  
   shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
   if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
-    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo/
+    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo al espacio de memoria.
   }
   release(&shmtable.lock);
   return 0;  // todo en orden
@@ -85,20 +85,22 @@ int
 shm_get(int key, char** addr)
 {
   acquire(&shmtable.lock);
-  if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){
-    release(&shmtable.lock); 
-    return -1;
+  if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){ 
+    release(&shmtable.lock);                  // lo cambiaria por: shmtable.sharedmemory[key].refcount == -1
+    return -1; // key invalida, debido a que esta fuera de los indices la key, o la referencia en ese espacio esta sin asignar.
   }  
   int i = 0;
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){
+  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){  
     i++;
   }
-  if (i == MAXSHMPROC ){
+  if (i == MAXSHMPROC ){ // si agoto los 4 espacios que posee el proceso disponible, entonces..
     release(&shmtable.lock); 
-    return -1;
-  } else {
+    return -1; // no ahi mas recursos disponibles (esp. de memoria compartida) por este proceso.
+  } else {  
+            // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
     mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
-    proc->shmref[i] = shmtable.sharedmemory[key].addr;
+            // tabla de paginas del proceso, tamaño de la memoria del proceso, 
+    proc->shmref[i] = shmtable.sharedmemory[key].addr; 
     shmtable.sharedmemory[key].refcount++;
     *addr = (char *)PGROUNDDOWN(proc->sz);
     proc->shmemquantity++;

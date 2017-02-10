@@ -9400,17 +9400,17 @@ shm_close(int key)
     release(&shmtable.lock);
 8010521f:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 80105226:	e8 b5 03 00 00       	call   801055e0 <release>
-    return -1;
+    return -1; // key invalidad por que no esta dentro de los indices (0 - 12), o en ese espacio esta vacio (refcount = -1)
 8010522b:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 80105230:	e9 8d 00 00 00       	jmp    801052c2 <shm_close+0xd0>
   }
   int i = 0;
 80105235:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
-  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){
+  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
 8010523c:	eb 03                	jmp    80105241 <shm_close+0x4f>
-    i++;
+    i++; // avanzo al proximo
 8010523e:	ff 45 f4             	incl   -0xc(%ebp)
-  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){
+  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
 80105241:	83 7d f4 03          	cmpl   $0x3,-0xc(%ebp)
 80105245:	7f 1e                	jg     80105265 <shm_close+0x73>
 80105247:	65 a1 04 00 00 00    	mov    %gs:0x4,%eax
@@ -9422,28 +9422,28 @@ shm_close(int key)
 80105261:	39 c2                	cmp    %eax,%edx
 80105263:	75 d9                	jne    8010523e <shm_close+0x4c>
   }
-  if (i == MAXSHMPROC){
+  if (i == MAXSHMPROC){ // quiere decir que alcazo a recorrer todos los espacios de memoria compartida del proceso.
 80105265:	83 7d f4 04          	cmpl   $0x4,-0xc(%ebp)
 80105269:	75 13                	jne    8010527e <shm_close+0x8c>
     release(&shmtable.lock);
 8010526b:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 80105272:	e8 69 03 00 00       	call   801055e0 <release>
-    return -1;
+    return -1; 
 80105277:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 8010527c:	eb 44                	jmp    801052c2 <shm_close+0xd0>
-  }
-  shmtable.sharedmemory[key].refcount--;
+  }  
+  shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
 8010527e:	8b 45 08             	mov    0x8(%ebp),%eax
 80105281:	8b 04 c5 64 0f 11 80 	mov    -0x7feef09c(,%eax,8),%eax
 80105288:	8d 50 ff             	lea    -0x1(%eax),%edx
 8010528b:	8b 45 08             	mov    0x8(%ebp),%eax
 8010528e:	89 14 c5 64 0f 11 80 	mov    %edx,-0x7feef09c(,%eax,8)
-  if (shmtable.sharedmemory[key].refcount == 0){
+  if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
 80105295:	8b 45 08             	mov    0x8(%ebp),%eax
 80105298:	8b 04 c5 64 0f 11 80 	mov    -0x7feef09c(,%eax,8),%eax
 8010529f:	85 c0                	test   %eax,%eax
 801052a1:	75 0e                	jne    801052b1 <shm_close+0xbf>
-    shmtable.sharedmemory[key].refcount = -1;
+    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo al espacio de memoria.
 801052a3:	8b 45 08             	mov    0x8(%ebp),%eax
 801052a6:	c7 04 c5 64 0f 11 80 	movl   $0xffffffff,-0x7feef09c(,%eax,8)
 801052ad:	ff ff ff ff 
@@ -9451,7 +9451,7 @@ shm_close(int key)
   release(&shmtable.lock);
 801052b1:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 801052b8:	e8 23 03 00 00       	call   801055e0 <release>
-  return 0;  
+  return 0;  // todo en orden
 801052bd:	b8 00 00 00 00       	mov    $0x0,%eax
 }
 801052c2:	c9                   	leave  
@@ -9469,7 +9469,7 @@ shm_get(int key, char** addr)
   acquire(&shmtable.lock);
 801052ca:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 801052d1:	e8 a8 02 00 00       	call   8010557e <acquire>
-  if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){
+  if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){ 
 801052d6:	83 7d 08 00          	cmpl   $0x0,0x8(%ebp)
 801052da:	78 15                	js     801052f1 <shm_get+0x2d>
 801052dc:	83 7d 08 0c          	cmpl   $0xc,0x8(%ebp)
@@ -9478,20 +9478,20 @@ shm_get(int key, char** addr)
 801052e5:	8b 04 c5 64 0f 11 80 	mov    -0x7feef09c(,%eax,8),%eax
 801052ec:	83 f8 04             	cmp    $0x4,%eax
 801052ef:	75 16                	jne    80105307 <shm_get+0x43>
-    release(&shmtable.lock); 
+    release(&shmtable.lock);                  // lo cambiaria por: shmtable.sharedmemory[key].refcount == -1
 801052f1:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 801052f8:	e8 e3 02 00 00       	call   801055e0 <release>
-    return -1;
+    return -1; // key invalida, debido a que esta fuera de los indices la key, o la referencia en ese espacio esta sin asignar.
 801052fd:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 80105302:	e9 0f 01 00 00       	jmp    80105416 <shm_get+0x152>
   }  
   int i = 0;
 80105307:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){
+  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // cambiarira por: (proc->shmref[i] != shmtable.sharedmemory[key].addr) 
 8010530e:	eb 03                	jmp    80105313 <shm_get+0x4f>
     i++;
 80105310:	ff 45 f4             	incl   -0xc(%ebp)
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){
+  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // cambiarira por: (proc->shmref[i] != shmtable.sharedmemory[key].addr) 
 80105313:	83 7d f4 03          	cmpl   $0x3,-0xc(%ebp)
 80105317:	7f 14                	jg     8010532d <shm_get+0x69>
 80105319:	65 a1 04 00 00 00    	mov    %gs:0x4,%eax
@@ -9501,16 +9501,17 @@ shm_get(int key, char** addr)
 80105329:	85 c0                	test   %eax,%eax
 8010532b:	75 e3                	jne    80105310 <shm_get+0x4c>
   }
-  if (i == MAXSHMPROC ){
+  if (i == MAXSHMPROC ){ // si agoto los 4 espacios que posee el proceso disponible, entonces..
 8010532d:	83 7d f4 04          	cmpl   $0x4,-0xc(%ebp)
 80105331:	75 16                	jne    80105349 <shm_get+0x85>
     release(&shmtable.lock); 
 80105333:	c7 04 24 c0 0f 11 80 	movl   $0x80110fc0,(%esp)
 8010533a:	e8 a1 02 00 00       	call   801055e0 <release>
-    return -1;
+    return -1; // no ahi mas recursos disponibles (esp. de memoria compartida) por este proceso.
 8010533f:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 80105344:	e9 cd 00 00 00       	jmp    80105416 <shm_get+0x152>
-  } else {
+  } else {  
+            // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
     mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
 80105349:	8b 45 f4             	mov    -0xc(%ebp),%eax
 8010534c:	8b 04 c5 60 0f 11 80 	mov    -0x7feef0a0(,%eax,8),%eax
@@ -9530,7 +9531,8 @@ shm_get(int key, char** addr)
 8010538a:	89 4c 24 04          	mov    %ecx,0x4(%esp)
 8010538e:	89 14 24             	mov    %edx,(%esp)
 80105391:	e8 ca 30 00 00       	call   80108460 <mappages>
-    proc->shmref[i] = shmtable.sharedmemory[key].addr;
+            // tabla de paginas del proceso, tamaño de la memoria del proceso, 
+    proc->shmref[i] = shmtable.sharedmemory[key].addr; 
 80105396:	65 a1 04 00 00 00    	mov    %gs:0x4,%eax
 8010539c:	8b 55 08             	mov    0x8(%ebp),%edx
 8010539f:	8b 14 d5 60 0f 11 80 	mov    -0x7feef0a0(,%edx,8),%edx
