@@ -100,13 +100,13 @@ shm_get(int key, char** addr)
             // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
     mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
             // tabla de pagina del proceso, tamaño de la memoria del proceso, PGSIZE, memoria fisica, permisos.
-    proc->shmref[i] = shmtable.sharedmemory[key].addr; 
-    shmtable.sharedmemory[key].refcount++;
-    *addr = (char *)PGROUNDDOWN(proc->sz);
-    proc->shmemquantity++;
-    proc->sz = proc->sz + PGSIZE;
+    proc->shmref[i] = shmtable.sharedmemory[key].addr; // la guardo en shmref[i]
+    shmtable.sharedmemory[key].refcount++; // existe uno mas
+    *addr = (char *)PGROUNDDOWN(proc->sz); // guardo la direccion en *addr
+    proc->shmemquantity++; // aumento la cantidad de espacio de memoria compartida por el proceso
+    proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso
     release(&shmtable.lock);
-    return 0;
+    return 0; // si todo salio bien.
   }   
 }
 
