@@ -5,8 +5,9 @@
 
 void
 test(){
-  int pid, keyIndex;
-  char* index = 0;
+  int pid, keyIndex; // creo dos indices
+  char* index = 0; // creo una direco inicializada en 0
+  
   keyIndex = shm_create();
   printf(1,"init index= %d  \n" , *index );
   printf(1,"init index= %d  \n" , &index );
