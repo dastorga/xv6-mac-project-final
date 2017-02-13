@@ -55,7 +55,21 @@ test(){
   wait();
   printf(1,"exit &(index)= %d  \n" , &(index) );
   printf(1,"exit *(index)= %d  \n" , *(index) );
-  
+}
+
+// test shm_close
+void
+test_1(){
+  int keyIndex;
+  int result;
+  char *index = 0;
+
+  keyIndex = shm_create(); // creo el espacio de memoria y guardo el indice
+  printf(1,"indice del espacio creado %d  \n" , keyIndex );
+
+  result = shm_close(keyIndex); // libero el espacio de memoria obtenido anteriormente
+  printf(1,"resultado del shm_close %d  \n" , result);
+
 }
 
 
@@ -64,6 +78,7 @@ main(int argc, char *argv[]) {
 
   // test_0();
   // test();
+  test_1();
 
   // int pid, keyIndex, keyIndex_2;
   // char* index = 0;
