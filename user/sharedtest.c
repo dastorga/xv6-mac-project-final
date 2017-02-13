@@ -61,15 +61,12 @@ test(){
 void
 test_1(){
   int keyIndex;
-  int result;
-  char *index = 0;
 
   keyIndex = shm_create(); // creo el espacio de memoria y guardo el indice
-  printf(1,"indice del espacio creado %d  \n" , keyIndex );
 
-  result = shm_close(keyIndex); // libero el espacio de memoria obtenido anteriormente
-  printf(1,"resultado del shm_close %d  \n" , result);
+  printf(1,"creo el espacio de memoria y guardo el indice %d  \n" , keyIndex );
 
+  printf(1,"resultado del shm_close %d  \n" , shm_close(keyIndexs));
 }
 
 
@@ -77,37 +74,38 @@ int
 main(int argc, char *argv[]) {
 
   // test_0();
+  // test_1();
   // test();
-  test_1();
+ 
 
-  // int pid, keyIndex, keyIndex_2;
-  // char* index = 0;
-  // char* index_2 = 0;
-  // keyIndex = shm_create();
-  // keyIndex_2 = shm_create();
-  // printf(1,"init index= %d  \n" , *index );
-  // printf(1,"init index= %d  \n" , &index );
-  // shm_get(keyIndex, &index);
-  // shm_get(keyIndex_2, &index_2);
-  // pid = fork(); 
-  // *index = 3;
-  // printf(1,"father index= %d  \n" , &index );
-  // printf(1,"father= %d  \n" , *index);
+  int pid, keyIndex, keyIndex_2;
+  char* index = 0;
+  char* index_2 = 0;
+  keyIndex = shm_create();
+  keyIndex_2 = shm_create();
+  printf(1,"init index= %d  \n" , *index );
+  printf(1,"init index= %d  \n" , &index );
+  shm_get(keyIndex, &index);
+  shm_get(keyIndex_2, &index_2);
+  pid = fork(); 
+  *index = 3;
+  printf(1,"father index= %d  \n" , &index );
+  printf(1,"father= %d  \n" , *index);
   
-  // if(pid == 0 ){
-  //   shm_get(keyIndex, &index);
-  //   shm_get(keyIndex_2, &index_2);
-  //   printf(1,"child index= %d  \n" , *(index) );
-  //   *index = 4;
-  //   printf(1,"child index= %d  \n" , *(index) );
-  //   *index_2 = 5;
-  //   printf(1,"child index_2= %d  \n" , *(index_2) );
-  //   exit();
-  // }
-  // printf(1,"exit index= %d  \n" , *(index) );
-  // wait();
-  // printf(1,"exit index_2= %d  \n" , *(index_2) );
-  // printf(1,"exit index= %d  \n" , &(index) );
-  // printf(1,"exit index= %d  \n" , *(index) );
+  if(pid == 0 ){
+    shm_get(keyIndex, &index);
+    shm_get(keyIndex_2, &index_2);
+    printf(1,"child index= %d  \n" , *(index) );
+    *index = 4;
+    printf(1,"child index= %d  \n" , *(index) );
+    *index_2 = 5;
+    printf(1,"child index_2= %d  \n" , *(index_2) );
+    exit();
+  }
+  printf(1,"exit index= %d  \n" , *(index) );
+  wait();
+  printf(1,"exit index_2= %d  \n" , *(index_2) );
+  printf(1,"exit index= %d  \n" , &(index) );
+  printf(1,"exit index= %d  \n" , *(index) );
   exit();
 }
