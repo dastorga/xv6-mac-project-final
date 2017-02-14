@@ -19,7 +19,7 @@ int sembuff;
 void
 produce( char* memProducer)
 {
-  printf(1,">> Start Producer\n");
+  printf(1,"--> Start Producer\n");
   int i;
   for(i = 0; i < MAX_IT * CONSUMERS; i++){
     semdown(semprod); // empty
@@ -28,7 +28,7 @@ produce( char* memProducer)
     printf(1,"producer libera [%x]\n", *memProducer);
     semup(sembuff); //mutex
     semup(semcom); // full
-    printf(1,">> Termina producer\n");
+    printf(1," Termina producer <--\n");
   }
 }
 
@@ -37,7 +37,7 @@ consume(char* memConsumer)
 {
   //shm_get(key, &memConsumer);
   
-  printf(1,">> Start Consumer\n");
+  printf(1,"--> Start Consumer\n");
   int i;
   for(i = 0; i < MAX_IT * PRODUCERS; i++){
     //printf(1,"consumer obtiene\n");
@@ -47,9 +47,10 @@ consume(char* memConsumer)
     printf(1,"consumer libera [%x]\n", *memConsumer);
     semup(sembuff);
     semup(semprod);
-    printf(1,">> Termina consumer\n");
+    printf(1," Termina consumer <--\n");
   }
 }
+
 // print process list running in the system 
 // calling system procstat
 int
