@@ -9,12 +9,12 @@
 #include "semaphore.h"
 
 struct {
-struct spinlock lock;
-struct sem sem[MAXSEM]; // atrib. (value,refcount) (MAXSEM = 16)
+	struct spinlock lock;
+	struct sem sem[MAXSEM]; // atrib. (value,refcount) (MAXSEM = 16)
 } stable;
 
 // proc->procsem es la lista de semaforos por proceso
-// MAXSEMPROC = 4 es la cantidad de semaforos por proceso
+// MAXSEMPROC = 4 es la cantidad maxima de semaforos por proceso
 struct sem** checkprocsem(){
 	struct sem **r;
 	// a "r" le asigno el arreglo de la list of semaphores del proceso

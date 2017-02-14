@@ -11,8 +11,6 @@
 #define NUMSEM 1
 #define N  4
 
-
-
 int buffer;
 int semprod;
 int semcom;
