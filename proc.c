@@ -20,7 +20,6 @@ struct {
   struct node mlf[SIZEMLF]; // New: Added in proyect 2: array of process priority level
 } ptable; 
 
-
 static struct proc *initproc;
 
 int nextpid = 1;
@@ -33,7 +32,7 @@ void
 pinit(void)
 {
   initlock(&ptable.lock, "ptable");
-  shm_init(); // New: Add in project final
+  shm_init(); // New: Add in project final: inicializo shmtable.sharedmemory[i].refcount = -1
 }
 
 void
