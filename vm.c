@@ -277,7 +277,7 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       // char *v = p2v(pa);
       // kfree(v);
       // *pte = 0;
-      if (!save_this){ // New: Add in project final
+      if (!save_this){ // New: Add in project final, ahi uno solo, le aplico el kfree
         char *v = p2v(pa);
         kfree(v);
         *pte = 0;
@@ -400,20 +400,25 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
+
+// struct sharedmemory* get_shm_table(){
+//   return shmtable.sharedmemory; // obtengo array sharedmemory de tipo sharedmemory
+// }
+
 int
 is_shared(uint pa){
   int j;
-  struct sharedmemory* shared_table = getshmtable();
-  int shared= 0;
-  for(j=0; j< MAXSHM; j++){ 
-    if (p2v(pa) == shared_table[j].addr && shared_table[j].refcount > 0){
+  struct sharedmemory* shared_array = get_shm_table(); 
+  int shared = 0;
+
+  for(j=0; j<MAXSHM; j++){ // recorro mi arreglo sharedmemory
+    if (p2v(pa) == shared_array[j].addr && shared_array[j].refcount > 0){ // refcount tiene a 2 entonces 
       shared = j+1;
       break;
     }
   }
-  return shared;
+  return shared; // ahi uno solo
 }
-
 
 
 

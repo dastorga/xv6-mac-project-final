@@ -9,4 +9,4 @@ struct {
   unsigned short quantity; //quantity of actives espaces of shared memory
 } shmtable;
    
-struct sharedmemory* getshmtable();
+struct sharedmemory* get_shm_table();

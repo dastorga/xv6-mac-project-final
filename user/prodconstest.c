@@ -63,7 +63,7 @@ main(void)
   *mem = (int)8; // le asigno un valor inicial 8 
 
   int pid_prod, pid_com, i;
-  printf(1,"***************Valor Inicial[%x]***************\n", *mem);
+  printf(1,"-- -- -- -- -- -- --  Valor Inicial[%x] -- -- -- -- -- -- -- \n", *mem);
   printf(1,"Buffer size: %d\n", BUFF_SIZE);
   // init buffer file
     for (i = 0; i < NUMSEM; i++) {
@@ -123,9 +123,11 @@ main(void)
       exit();
     }
   }
+
   for (i = 0; i < PRODUCERS + CONSUMERS; i++) {
     wait();
   }
-  printf(1,"***************Valor Final[%x]***************\n", *mem);
+   
+  printf(1,"-- -- -- -- -- -- -- Valor Final[%x] -- -- -- -- -- -- -- \n", *mem);
   exit();
 }

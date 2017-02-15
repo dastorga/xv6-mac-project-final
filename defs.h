@@ -129,7 +129,7 @@ int                    shm_init();
 int                    shm_close(int key);
 int                    shm_create();
 int                    shm_get(int key, char** addr);
-struct sharedmemory*   getshmtable();
+struct sharedmemory*   get_shm_table();
 
 // swtch.S
 void            swtch(struct context**, struct context*);

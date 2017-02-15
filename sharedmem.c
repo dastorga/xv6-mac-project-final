@@ -106,11 +106,12 @@ shm_get(int key, char** addr)
     proc->shmemquantity++; // aumento la cantidad de espacio de memoria compartida por el proceso
     proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso
     release(&shmtable.lock);
-    return 0; // si todo salio bien.
+    return 0; // todo salio bien.
   }   
 }
 
-struct sharedmemory*
-getshmtable(){
-  return shmtable.sharedmemory;
+//Obtains the array from type sharedmemory
+struct sharedmemory* get_shm_table(){
+  return shmtable.sharedmemory; // como resultado, mi arreglo principal sharedmemory 
 }
+
