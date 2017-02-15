@@ -19,7 +19,7 @@ int sembuff;
 void
 produce( char* memProducer)
 {
-  printf(1,"--> Start Producer\n");
+  printf(1,"--> Inicia Producer\n");
   int i;
   for(i = 0; i < MAX_IT * CONSUMERS; i++){
     semdown(semprod); // empty
@@ -37,7 +37,7 @@ consume(char* memConsumer)
 {
   //shm_get(key, &memConsumer);
   
-  printf(1,"--> Start Consumer\n");
+  printf(1,"--> Inicia Consumer\n");
   int i;
   for(i = 0; i < MAX_IT * PRODUCERS; i++){
     //printf(1,"consumer obtiene\n");
@@ -58,8 +58,8 @@ main(void)
 {
   int k;  
   char* mem= 0;
-  k = shm_create();
-  shm_get(k,&mem);
+  k = shm_create(); // primer espacio de memoria compartido
+  shm_get(k,&mem); // 
   *mem = (int)8;
 
   int pid_prod, pid_com, i;
