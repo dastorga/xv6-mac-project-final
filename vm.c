@@ -402,14 +402,18 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 
 int
 is_shared(uint pa){
-  int i;
+  int j;
   struct sharedmemory* shared_table = getshmtable();
   int shared= 0;
-  for(i=0; i< MAXSHM; i++){ 
-    if (p2v(pa) == shared_table[i].addr && shared_table[i].refcount > 0){
-    shared = i+1;
-    break;
+  for(j=0; j< MAXSHM; j++){ 
+    if (p2v(pa) == shared_table[j].addr && shared_table[j].refcount > 0){
+      shared = j+1;
+      break;
     }
   }
   return shared;
 }
+
+
+
+

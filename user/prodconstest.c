@@ -25,7 +25,7 @@ produce( char* memProducer)
     semdown(semprod); // empty
     semdown(sembuff); // mutex
     *memProducer= ((int)*memProducer)+1;
-    printf(1,"producer libera [%x]\n", *memProducer);
+    printf(1,"Productor libera [%x]\n", *memProducer);
     semup(sembuff); //mutex
     semup(semcom); // full
     printf(1," Termina producer <--\n");
@@ -44,7 +44,7 @@ consume(char* memConsumer)
     semdown(semcom);
     semdown(sembuff);
     *memConsumer= ((int)*memConsumer) -1;
-    printf(1,"consumer libera [%x]\n", *memConsumer);
+    printf(1,"Consumidor libera [%x]\n", *memConsumer);
     semup(sembuff);
     semup(semprod);
     printf(1," Termina consumer <--\n");
@@ -59,8 +59,8 @@ main(void)
   int k;  
   char* mem= 0;
   k = shm_create(); // primer espacio de memoria compartido
-  shm_get(k,&mem); // 
-  *mem = (int)8;
+  shm_get(k,&mem); // obtengo  
+  *mem = (int)8; // le asigno un valor inicial 8 
 
   int pid_prod, pid_com, i;
   printf(1,"***************Valor Inicial[%x]***************\n", *mem);
