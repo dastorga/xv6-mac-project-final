@@ -42,7 +42,7 @@ shm_create()
                                                 // si todo sale bien, me retorna como resultado un puntero (direccion) de donde 
                                                 // se encuentra alojada, a esta direccion la almaceno en "sharedmemory.addr".
                                                 // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
-      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); // consultar! no estoy seguro - PGSIZE = 4096 // bytes mapped by a page
+      memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
       shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0.
       shmtable.quantity++; // Aqui indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
       release(&shmtable.lock);
@@ -68,9 +68,9 @@ shm_close(int key)
   while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
     i++; // avanzo al proximo
   }
-  if (i == MAXSHMPROC){ // quiere decir que alcazo a recorrer todos los espacios de memoria compartida del proceso.
+  if (i == MAXSHMPROC){ 
     release(&shmtable.lock);
-    return -1; 
+    return -1; // se alcazo a recorrer todos los espacios de memoria compartida del proceso.
   }  
   shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
   if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
@@ -102,7 +102,7 @@ shm_get(int key, char** addr)
             // tabla de pagina del proceso, tamaño de la memoria del proceso, PGSIZE, memoria fisica, permisos (escritura y user)
             // crea PTEs para direcciones virtuales comenzando en va que se refieren a
             // direcciones físicas empezando por pa
-    
+
     proc->shmref[i] = shmtable.sharedmemory[key].addr; // la guardo en shmref[i]
     shmtable.sharedmemory[key].refcount++; // existe uno mas
     *addr = (char *)PGROUNDDOWN(proc->sz); // guardo la direccion en *addr
