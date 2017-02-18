@@ -39,8 +39,8 @@ shm_create()
   while (i<MAXSHM){ // busco el primer espacio desocupado
     if (shmtable.sharedmemory[i].refcount == -1){ // si es -1, esta desocupado el espacio.
       shmtable.sharedmemory[i].addr = kalloc(); // El "kalloc" asigna una pagina de 4096 bytes de memoria fisica,
-                                                // si todo sale bien, me retorna como resultado un puntero (direccion) de donde 
-                                                // se encuentra alojada, a esta direccion la almaceno en "sharedmemory.addr".
+                                                // si todo sale bien, me retorna como resultado un puntero (direccion), 
+                                                // a esta direccion la almaceno en "sharedmemory.addr".
                                                 // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
       memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
       shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0.
@@ -84,13 +84,14 @@ shm_close(int key)
 int
 shm_get(int key, char** addr)
 {
+  int j;
   acquire(&shmtable.lock);
   if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){ 
-    release(&shmtable.lock);                  // lo cambiaria por: shmtable.sharedmemory[key].refcount == -1
+    release(&shmtable.lock);                 
     return -1; // key invalida, debido a que esta fuera de los indices la key, o la referencia en ese espacio esta sin asignar.
   }  
   int i = 0;
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // si es diferente a 0 es por que existe una referencia
+  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // existe una referencia
     i++;
   }
   if (i == MAXSHMPROC ){ // si agoto los 4 espacios que posee el proceso disponible, entonces..
@@ -98,10 +99,11 @@ shm_get(int key, char** addr)
     return -1; // no ahi mas recursos disponibles (esp. de memoria compartida) por este proceso.
   } else {  
             // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
-    mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
-            // tabla de pagina del proceso, tamaño de la memoria del proceso, PGSIZE, memoria fisica, permisos (escritura y user)
+    j = mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
             // crea PTEs para direcciones virtuales comenzando en va que se refieren a
             // direcciones físicas empezando por pa
+
+    if (j==-1) { cprintf("mappages error \n"); }
 
     proc->shmref[i] = shmtable.sharedmemory[key].addr; // la guardo en shmref[i]
     shmtable.sharedmemory[key].refcount++; // existe uno mas
@@ -117,10 +119,5 @@ shm_get(int key, char** addr)
 struct sharedmemory* get_shm_table(){
   return shmtable.sharedmemory; // como resultado, mi arreglo principal sharedmemory 
 }
-
-
-
-
-
 
 
