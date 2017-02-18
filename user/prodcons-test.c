@@ -58,12 +58,12 @@ main(void)
 {
   int k;  
   char* mem= 0;
-  k = shm_create(); // primer espacio de memoria compartido
+  k = shm_create(); // primer espacio de memoria a compartir
   shm_get(k,&mem); // obtengo  
-  *mem = (int)8; // le asigno un valor inicial 8 
+  *mem = (int)8;  // inicialmente con 8 
 
   int pid_prod, pid_com, i;
-  printf(1,"-- -- -- -- -- -- --  Valor Inicial[%x] -- -- -- -- -- -- -- \n", *mem);
+  printf(1,"-------------------------- VALOR INICIAL: [%x] \n", *mem);
   printf(1,"Tamaño de buffer: %d\n", BUFF_SIZE);
   
   // init buffer file
@@ -129,6 +129,6 @@ main(void)
     wait();
   }
    
-  printf(1,"-- -- -- -- -- -- -- Valor Final[%x] -- -- -- -- -- -- -- \n", *mem);
+  printf(1,"-------------------------- VALOR FINAL: [%x]  \n", *mem);
   exit();
 }
