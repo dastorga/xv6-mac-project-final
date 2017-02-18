@@ -59,7 +59,7 @@ main(void)
   int k;  
   char* mem= 0;
   k = shm_create(); // primer espacio de memoria a compartir
-  shm_get(k,&mem); // obtengo  
+  shm_get(k,&mem);   
   *mem = (int)8;  // inicialmente con 8 
 
   int pid_prod, pid_com, i;

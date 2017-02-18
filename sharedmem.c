@@ -43,8 +43,8 @@ shm_create()
                                                 // a esta direccion la almaceno en "sharedmemory.addr".
                                                 // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
       memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
-      shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0.
-      shmtable.quantity++; // Aqui indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
+      shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0, inicialmente.
+      shmtable.quantity++; // Indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
       release(&shmtable.lock);
       return i; // retorno el indice (key) del arreglo en donde se encuentra el espacio de memoria compartida.
     } else
