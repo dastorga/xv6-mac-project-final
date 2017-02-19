@@ -98,15 +98,19 @@ shm_get(int key, char** addr)
     release(&shmtable.lock); 
     return -1; // no ahi mas recursos disponibles (esp. de memoria compartida) por este proceso.
   } else {  
-            // mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
+            
     j = mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
-            // crea PTEs para direcciones virtuales comenzando en va que se refieren a
+            // parametros mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
+            // MAPPAGES: crea PTEs para direcciones virtuales comenzando en va que se refieren a
             // direcciones físicas empezando por pa
+
+            // PTE_U: controla que el proceso de usuario pueda utilizar la pagina, si no solo el kernel puede usar la pagina.
+            // PTE_W: controla si las instrucciones se les permite escribir en la pagina.
 
     if (j==-1) { cprintf("mappages error \n"); }
 
     proc->shmref[i] = shmtable.sharedmemory[key].addr; // la guardo en shmref[i]
-    shmtable.sharedmemory[key].refcount++; // existe uno mas
+    shmtable.sharedmemory[key].refcount++; 
     *addr = (char *)PGROUNDDOWN(proc->sz); // guardo la direccion en *addr
     proc->shmemquantity++; // aumento la cantidad de espacio de memoria compartida por el proceso
     proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso
