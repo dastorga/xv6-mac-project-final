@@ -44,7 +44,7 @@ shm_create()
                                                 // Si el kalloc no pudo asignar la memoria me devuelve como resultado 0.
       memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
       shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0, inicialmente.
-      shmtable.quantity++; // Indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
+      shmtable.quantity++; // se tomo un espacio del arreglo 
       release(&shmtable.lock);
       return i; // retorno el indice (key) del arreglo en donde se encuentra el espacio de memoria compartida.
     } else
@@ -72,8 +72,8 @@ shm_close(int key)
     release(&shmtable.lock);
     return -1; // se alcazo a recorrer todos los espacios de memoria compartida del proceso.
   }  
-  shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
-  if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
+  shmtable.sharedmemory[key].refcount--; // encontre la direccion, luego decremento refcount.
+  if (shmtable.sharedmemory[key].refcount == 0){ 
     shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo al espacio de memoria.
   }
   release(&shmtable.lock);
