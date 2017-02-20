@@ -162,7 +162,7 @@ main(void)
  168:	8b 44 24 28          	mov    0x28(%esp),%eax
  16c:	89 04 24             	mov    %eax,(%esp)
  16f:	e8 ea 05 00 00       	call   75e <shm_get>
-  *mem = 8;  // inicialmente con 8 
+  *mem = (int)8;  // inicialmente con 8 
  174:	8b 44 24 1c          	mov    0x1c(%esp),%eax
  178:	c6 00 08             	movb   $0x8,(%eax)
 
@@ -207,52 +207,53 @@ main(void)
  1f6:	e8 43 06 00 00       	call   83e <printf>
         exit();
  1fb:	e8 6e 04 00 00       	call   66e <exit>
-    }
+      }
     
-    // create consumer semaphore
-    semcom = semget(-1,0); // full
+      // create consumer semaphore
+      semcom = semget(-1,0); // full
  200:	c7 44 24 04 00 00 00 	movl   $0x0,0x4(%esp)
  207:	00 
  208:	c7 04 24 ff ff ff ff 	movl   $0xffffffff,(%esp)
  20f:	e8 1a 05 00 00       	call   72e <semget>
  214:	a3 34 10 00 00       	mov    %eax,0x1034
-    if(semcom < 0){
+      if(semcom < 0){
  219:	a1 34 10 00 00       	mov    0x1034,%eax
  21e:	85 c0                	test   %eax,%eax
  220:	79 19                	jns    23b <main+0xf5>
-      printf(1,"invalid semcom\n");
+        printf(1,"invalid semcom\n");
  222:	c7 44 24 04 f2 0c 00 	movl   $0xcf2,0x4(%esp)
  229:	00 
  22a:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  231:	e8 08 06 00 00       	call   83e <printf>
-      exit();
+        exit();
  236:	e8 33 04 00 00       	call   66e <exit>
-    }
+      }
     
-    // create buffer semaphore
-    sembuff = semget(-1,1); // mutex
+      // create buffer semaphore
+      sembuff = semget(-1,1); // mutex
  23b:	c7 44 24 04 01 00 00 	movl   $0x1,0x4(%esp)
  242:	00 
  243:	c7 04 24 ff ff ff ff 	movl   $0xffffffff,(%esp)
  24a:	e8 df 04 00 00       	call   72e <semget>
  24f:	a3 2c 10 00 00       	mov    %eax,0x102c
-    if(sembuff < 0){
+      if(sembuff < 0){
  254:	a1 2c 10 00 00       	mov    0x102c,%eax
  259:	85 c0                	test   %eax,%eax
  25b:	79 19                	jns    276 <main+0x130>
-      printf(1,"invalid sembuff\n");
+        printf(1,"invalid sembuff\n");
  25d:	c7 44 24 04 02 0d 00 	movl   $0xd02,0x4(%esp)
  264:	00 
  265:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  26c:	e8 cd 05 00 00       	call   83e <printf>
-      exit();
+        exit();
  271:	e8 f8 03 00 00       	call   66e <exit>
     for (i = 0; i < NUMSEM; i++) {
  276:	ff 44 24 2c          	incl   0x2c(%esp)
  27a:	83 7c 24 2c 00       	cmpl   $0x0,0x2c(%esp)
  27f:	0f 8e 40 ff ff ff    	jle    1c5 <main+0x7f>
-    }
+      }
   }
+
   for (i = 0; i < PRODUCERS; i++) {
  285:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%esp)
  28c:	00 
@@ -273,7 +274,7 @@ main(void)
  2b6:	e8 b3 03 00 00       	call   66e <exit>
     }
     // launch producer process
-    if(pid_prod == 0){
+    if(pid_prod == 0){ // hijo
  2bb:	83 7c 24 24 00       	cmpl   $0x0,0x24(%esp)
  2c0:	75 64                	jne    326 <main+0x1e0>
       shm_get(k, &mem);
@@ -312,11 +313,11 @@ main(void)
  32f:	0f 8e 5d ff ff ff    	jle    292 <main+0x14c>
     }
   }
+
   for (i = 0; i < CONSUMERS; i++) {
  335:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%esp)
  33c:	00 
  33d:	e9 98 00 00 00       	jmp    3da <main+0x294>
-
     // create consumer process
     pid_com = fork();
  342:	e8 1f 03 00 00       	call   666 <fork>
@@ -333,7 +334,7 @@ main(void)
  366:	e8 03 03 00 00       	call   66e <exit>
     }
     // launch consumer process
-    if(pid_com == 0){
+    if(pid_com == 0){ // hijo
  36b:	83 7c 24 20 00       	cmpl   $0x0,0x20(%esp)
  370:	75 64                	jne    3d6 <main+0x290>
       shm_get(k, &mem);
@@ -373,13 +374,13 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) {
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // espero 6 wait
  3e5:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%esp)
  3ec:	00 
  3ed:	eb 09                	jmp    3f8 <main+0x2b2>
     wait();
  3ef:	e8 82 02 00 00       	call   676 <wait>
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) {
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // espero 6 wait
  3f4:	ff 44 24 2c          	incl   0x2c(%esp)
  3f8:	83 7c 24 2c 05       	cmpl   $0x5,0x2c(%esp)
  3fd:	7e f0                	jle    3ef <main+0x2a9>

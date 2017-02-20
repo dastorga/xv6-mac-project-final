@@ -33,7 +33,7 @@ produce( char* memProducer)
     //  REGION CRITICA
     *memProducer= ((int)*memProducer) + 1;
     // 
-    printf(1,"Productor libera [%x]\n", *memProducer);
+    printf(1,"Productor libera, actualizo a [%x]\n", *memProducer);
     semup(sembuff); //mutex
     semup(semcom); // full
     printf(1,"-- Termina Productor --\n");
@@ -53,7 +53,7 @@ consume(char* memConsumer)
     // REGION CRITICA
     *memConsumer= ((int)*memConsumer) - 1;
     // 
-    printf(1,"Consumidor libera [%x]\n", *memConsumer);
+    printf(1,"Consumidor libera, actualizo a [%x]\n", *memConsumer);
     semup(sembuff);
     semup(semprod);
     printf(1,"-- Termina Consumidor --\n");
@@ -73,7 +73,7 @@ main(void)
 
   int pid_prod, pid_com, i;
   printf(1,"-------------------------- VALOR INICIAL: [%x] \n", *mem);
-  printf(1,"Tamaño de buffer: %d\n", BUFF_SIZE);
+  printf(1,"--- Tamaño de buffer: %d\n", BUFF_SIZE);
   
   // init buffer file
     for (i = 0; i < NUMSEM; i++) {

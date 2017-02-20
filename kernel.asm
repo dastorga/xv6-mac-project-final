@@ -8921,7 +8921,7 @@ int semget(int sem_id, int init_value){
 	acquire(&stable.lock);
 80104e00:	c7 04 24 60 3b 11 80 	movl   $0x80113b60,(%esp)
 80104e07:	e8 87 07 00 00       	call   80105593 <acquire>
-	if (sem_id == -1) { // se desea crear un semaforo nuevo
+	if (sem_id == -1) { // se desea CREAR un semaforo nuevo
 80104e0c:	83 7d 08 ff          	cmpl   $0xffffffff,0x8(%ebp)
 80104e10:	0f 85 9d 00 00 00    	jne    80104eb3 <semget+0xe0>
 		for (t = stable.sem; t < stable.sem + MAXSEM; t++)
@@ -8942,7 +8942,7 @@ int semget(int sem_id, int init_value){
 80104e3a:	8b 00                	mov    (%eax),%eax
 80104e3c:	85 c0                	test   %eax,%eax
 80104e3e:	74 39                	je     80104e79 <semget+0xa6>
-				goto found;
+				goto found; // encontro
 			release(&stable.lock);
 80104e40:	c7 04 24 60 3b 11 80 	movl   $0x80113b60,(%esp)
 80104e47:	e8 a9 07 00 00       	call   801055f5 <release>
@@ -8960,7 +8960,7 @@ int semget(int sem_id, int init_value){
 		return -3; // no ahi mas semaforos disponibles en el sistema
 80104e6f:	b8 fd ff ff ff       	mov    $0xfffffffd,%eax
 80104e74:	e9 b5 00 00 00       	jmp    80104f2e <semget+0x15b>
-				goto found;
+				goto found; // encontro
 80104e79:	90                   	nop
 
 		found:
