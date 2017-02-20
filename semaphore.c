@@ -43,12 +43,12 @@ int semget(int sem_id, int init_value){
 	}
 
 	acquire(&stable.lock);
-	if (sem_id == -1) { // se desea crear un semaforo nuevo
+	if (sem_id == -1) { // se desea CREAR un semaforo nuevo
 		for (t = stable.sem; t < stable.sem + MAXSEM; t++)
 		if (t->refcount == 0){
 			s = t;
 			if (*(r = checkprocsem()) == 0)
-				goto found;
+				goto found; // encontro
 			release(&stable.lock);
 			return -2; // el proceso ya obtuvo el numero maximo de semaforos
 		}

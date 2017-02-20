@@ -32,7 +32,7 @@ produce( char* memProducer)
   35:	89 04 24             	mov    %eax,(%esp)
   38:	e8 01 07 00 00       	call   73e <semdown>
     //  REGION CRITICA
-    *memProducer= ((int)*memProducer)+1;
+    *memProducer= ((int)*memProducer) + 1;
   3d:	8b 45 08             	mov    0x8(%ebp),%eax
   40:	8a 00                	mov    (%eax),%al
   42:	40                   	inc    %eax
@@ -99,7 +99,7 @@ consume(char* memConsumer)
   d8:	89 04 24             	mov    %eax,(%esp)
   db:	e8 5e 06 00 00       	call   73e <semdown>
     // REGION CRITICA
-    *memConsumer= ((int)*memConsumer) -1;
+    *memConsumer= ((int)*memConsumer) - 1;
   e0:	8b 45 08             	mov    0x8(%ebp),%eax
   e3:	8a 00                	mov    (%eax),%al
   e5:	48                   	dec    %eax
@@ -156,13 +156,13 @@ main(void)
   k = shm_create(); // creo espacio de memoria que sera para compartir
  157:	e8 f2 05 00 00       	call   74e <shm_create>
  15c:	89 44 24 28          	mov    %eax,0x28(%esp)
-  shm_get(k,&mem);   
+  shm_get(k,&mem);  // mapeo el espacio 
  160:	8d 44 24 1c          	lea    0x1c(%esp),%eax
  164:	89 44 24 04          	mov    %eax,0x4(%esp)
  168:	8b 44 24 28          	mov    0x28(%esp),%eax
  16c:	89 04 24             	mov    %eax,(%esp)
  16f:	e8 ea 05 00 00       	call   75e <shm_get>
-  *mem = (int)8;  // inicialmente con 8 
+  *mem = 8;  // inicialmente con 8 
  174:	8b 44 24 1c          	mov    0x1c(%esp),%eax
  178:	c6 00 08             	movb   $0x8,(%eax)
 

@@ -82,22 +82,23 @@ main(void)
       if(semprod < 0){
         printf(1,"invalid semprod \n");
         exit();
-    }
+      }
     
-    // create consumer semaphore
-    semcom = semget(-1,0); // full
-    if(semcom < 0){
-      printf(1,"invalid semcom\n");
-      exit();
-    }
+      // create consumer semaphore
+      semcom = semget(-1,0); // full
+      if(semcom < 0){
+        printf(1,"invalid semcom\n");
+        exit();
+      }
     
-    // create buffer semaphore
-    sembuff = semget(-1,1); // mutex
-    if(sembuff < 0){
-      printf(1,"invalid sembuff\n");
-      exit();
-    }
+      // create buffer semaphore
+      sembuff = semget(-1,1); // mutex
+      if(sembuff < 0){
+        printf(1,"invalid sembuff\n");
+        exit();
+      }
   }
+
   for (i = 0; i < PRODUCERS; i++) {
     // create producer process
     pid_prod = fork();
@@ -106,7 +107,7 @@ main(void)
       exit(); 
     }
     // launch producer process
-    if(pid_prod == 0){
+    if(pid_prod == 0){ // hijo
       shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);
@@ -115,8 +116,8 @@ main(void)
       exit();
     }
   }
-  for (i = 0; i < CONSUMERS; i++) {
 
+  for (i = 0; i < CONSUMERS; i++) {
     // create consumer process
     pid_com = fork();
     if(pid_com < 0){
@@ -124,7 +125,7 @@ main(void)
       exit(); 
     }
     // launch consumer process
-    if(pid_com == 0){
+    if(pid_com == 0){ // hijo
       shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);
@@ -134,7 +135,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) {
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // espero 6 wait
     wait();
   }
    
