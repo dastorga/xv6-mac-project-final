@@ -88,7 +88,7 @@ shm_get(int key, char** addr)
   acquire(&shmtable.lock);
   if ( key < 0 || key > MAXSHM || shmtable.sharedmemory[key].refcount == MAXSHMPROC ){ 
     release(&shmtable.lock);                 
-    return -1; // key invalida, debido a que esta fuera de los indices la key, o la referencia en ese espacio esta sin asignar.
+    return -1; // key invalida, debido a que esta fuera de los indices la key.
   }  
   int i = 0;
   while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // existe una referencia
@@ -112,9 +112,9 @@ shm_get(int key, char** addr)
 
     proc->shmref[i] = shmtable.sharedmemory[key].addr; // la guardo en shmref[i]
     shmtable.sharedmemory[key].refcount++; 
-    *addr = (char *)PGROUNDDOWN(proc->sz); // guardo la direccion en *addr
+    *addr = (char *)PGROUNDDOWN(proc->sz); // guardo la direccion en *addr, de la pagina que se encuentra por debajo de proc->sz
     proc->shmemquantity++; // aumento la cantidad de espacio de memoria compartida por el proceso
-    proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso
+    proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso, debido a que ya se realizo el mapeo
     release(&shmtable.lock);
     return 0; // todo salio bien.
   }   

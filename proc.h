@@ -70,7 +70,7 @@ struct proc {
   int priority;                     // New: Added in project 2: priority of a process   
   struct proc *next;                // New: Added in project 2: pointer to next proc 
   struct sem *procsem[MAXSEMPROC];  // New: Add in project 3: list of semaphores
-  int shmem[MAXSHMPROC];            // New: Added in project final: spaces of shared memory used for this process 
+  //int shmem[MAXSHMPROC];            // New: Added in project final: spaces of shared memory used for this process 
   char* shmref[MAXSHMPROC];         // New: Added in project final: references of shared memory used for this process
   int shmemquantity;                // New: Added in project final: quantity of spaces in shared memory 
 };
