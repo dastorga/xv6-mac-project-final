@@ -27,7 +27,7 @@ produce( char* memProducer)
 {
   printf(1,"-- Inicia Productor --\n");
   int i;
-  for(i = 0; i < MAX_IT * CONSUMERS; i++){ // el i va hasta 10
+  for(i = 0; i < CONSUMERS; i++){ // el i va hasta 10
     semdown(semprod); // empty
     semdown(sembuff); // mutex
     //  REGION CRITICA
@@ -46,7 +46,7 @@ consume(char* memConsumer)
   
   printf(1,"-- Inicia Consumidor --\n");
   int i;
-  for(i = 0; i < MAX_IT * PRODUCERS; i++){ // hasta 20
+  for(i = 0; i < PRODUCERS; i++){ // hasta 20
     //printf(1,"consumer obtiene\n");
     semdown(semcom);
     semdown(sembuff);
