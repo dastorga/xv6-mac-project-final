@@ -1,3 +1,9 @@
+// Ejemplo de Productor consumidor.
+//
+// Recordar: 
+// * acceso al contenido
+// & obtension de la direccion
+
 #include "types.h"
 #include "user.h"
 #include "fcntl.h"
@@ -19,35 +25,38 @@ int sembuff;
 void
 produce( char* memProducer)
 {
-  printf(1,"--> Inicia Producer\n");
+  printf(1,"-- Inicia Productor --\n");
   int i;
-  for(i = 0; i < MAX_IT * CONSUMERS; i++){
+  for(i = 0; i < MAX_IT * CONSUMERS; i++){ // el i va hasta 10
     semdown(semprod); // empty
     semdown(sembuff); // mutex
-    *memProducer= ((int)*memProducer)+1;
+    //  REGION CRITICA
+    *memProducer= ((int)*memProducer) + 1;
+    // 
     printf(1,"Productor libera [%x]\n", *memProducer);
     semup(sembuff); //mutex
     semup(semcom); // full
-    printf(1," Termina producer <--\n");
+    printf(1,"-- Termina Productor --\n");
   }
 }
 
 void
 consume(char* memConsumer)
-{
-  //shm_get(key, &memConsumer);
+{ //shm_get(key, &memConsumer);
   
-  printf(1,"--> Inicia Consumer\n");
+  printf(1,"-- Inicia Consumidor --\n");
   int i;
-  for(i = 0; i < MAX_IT * PRODUCERS; i++){
+  for(i = 0; i < MAX_IT * PRODUCERS; i++){ // hasta 20
     //printf(1,"consumer obtiene\n");
     semdown(semcom);
     semdown(sembuff);
-    *memConsumer= ((int)*memConsumer) -1;
+    // REGION CRITICA
+    *memConsumer= ((int)*memConsumer) - 1;
+    // 
     printf(1,"Consumidor libera [%x]\n", *memConsumer);
     semup(sembuff);
     semup(semprod);
-    printf(1," Termina consumer <--\n");
+    printf(1,"-- Termina Consumidor --\n");
   }
 }
 
@@ -59,7 +68,7 @@ main(void)
   int k;  
   char* mem= 0;
   k = shm_create(); // creo espacio de memoria que sera para compartir
-  shm_get(k,&mem);   
+  shm_get(k,&mem);  // mapeo el espacio 
   *mem = (int)8;  // inicialmente con 8 
 
   int pid_prod, pid_com, i;
