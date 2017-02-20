@@ -102,7 +102,8 @@ shm_get(int key, char** addr)
     j = mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
             // parametros mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
             // MAPPAGES: crea PTEs para direcciones virtuales comenzando en va que se refieren a
-            // direcciones físicas empezando por pa
+            // direcciones físicas empezando por pa.
+            // Llena entradas de la tabla de paginas, mapeo de direcciones virtuales segun direc. fisicas
 
             // PTE_U: controla que el proceso de usuario pueda utilizar la pagina, si no solo el kernel puede usar la pagina.
             // PTE_W: controla si las instrucciones se les permite escribir en la pagina.
