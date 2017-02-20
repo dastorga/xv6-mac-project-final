@@ -344,7 +344,7 @@ copyuvm(pde_t *pgdir, uint sz)
 
     only_map = is_shared(pa); // New: Add in project final
     if (!only_map) { 
-      if((mem = kalloc()) == 0)
+      if((mem = kalloc()) == 0) // el kalloc no pudo asignar la memoria
         goto bad;
       memmove(mem, (char*)p2v(pa), PGSIZE);
       if(mappages(d, (void*)i, PGSIZE, v2p(mem), flags) < 0)

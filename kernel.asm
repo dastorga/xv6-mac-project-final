@@ -9349,7 +9349,7 @@ shm_create()
 801051ac:	8d 50 01             	lea    0x1(%eax),%edx
 801051af:	8b 45 f4             	mov    -0xc(%ebp),%eax
 801051b2:	89 14 c5 64 0f 11 80 	mov    %edx,-0x7feef09c(,%eax,8)
-      shmtable.quantity++; // Indico que un espacio mas del arreglo sharedmemory a sido ocupado. 
+      shmtable.quantity++; // se tomo un espacio del arreglo 
 801051b9:	a1 f4 0f 11 80       	mov    0x80110ff4,%eax
 801051be:	40                   	inc    %eax
 801051bf:	66 a3 f4 0f 11 80    	mov    %ax,0x80110ff4
@@ -9432,18 +9432,18 @@ shm_close(int key)
 80105277:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 8010527c:	eb 44                	jmp    801052c2 <shm_close+0xd0>
   }  
-  shmtable.sharedmemory[key].refcount--; // sino, es por que encontre la direccion, y paso a disminuir refcount.
+  shmtable.sharedmemory[key].refcount--; // encontre la direccion, luego decremento refcount.
 8010527e:	8b 45 08             	mov    0x8(%ebp),%eax
 80105281:	8b 04 c5 64 0f 11 80 	mov    -0x7feef09c(,%eax,8),%eax
 80105288:	8d 50 ff             	lea    -0x1(%eax),%edx
 8010528b:	8b 45 08             	mov    0x8(%ebp),%eax
 8010528e:	89 14 c5 64 0f 11 80 	mov    %edx,-0x7feef09c(,%eax,8)
-  if (shmtable.sharedmemory[key].refcount == 0){ // deberia estar en cero
+  if (shmtable.sharedmemory[key].refcount == 0){ 
 80105295:	8b 45 08             	mov    0x8(%ebp),%eax
 80105298:	8b 04 c5 64 0f 11 80 	mov    -0x7feef09c(,%eax,8),%eax
 8010529f:	85 c0                	test   %eax,%eax
 801052a1:	75 0e                	jne    801052b1 <shm_close+0xbf>
-    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo al espacio de memoria.
+    shmtable.sharedmemory[key].refcount = -1; // reinicio el espacio en el arreglo, como solo quedo uno, lo reinicio.
 801052a3:	8b 45 08             	mov    0x8(%ebp),%eax
 801052a6:	c7 04 c5 64 0f 11 80 	movl   $0xffffffff,-0x7feef09c(,%eax,8)
 801052ad:	ff ff ff ff 
@@ -15269,7 +15269,7 @@ mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
 8010848f:	25 00 f0 ff ff       	and    $0xfffff000,%eax
 80108494:	89 45 f0             	mov    %eax,-0x10(%ebp)
   for(;;){
-    if((pte = walkpgdir(pgdir, a, 1)) == 0) // create any required page table pages.
+    if((pte = walkpgdir(pgdir, a, 1)) == 0) // walkpgdir: create any required page table pages, osea
 80108497:	c7 44 24 08 01 00 00 	movl   $0x1,0x8(%esp)
 8010849e:	00 
 8010849f:	8b 45 f4             	mov    -0xc(%ebp),%eax
@@ -15280,9 +15280,9 @@ mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
 801084b1:	89 45 ec             	mov    %eax,-0x14(%ebp)
 801084b4:	83 7d ec 00          	cmpl   $0x0,-0x14(%ebp)
 801084b8:	75 07                	jne    801084c1 <mappages+0x4c>
-                                            // crea cualquier pagina requerida para la tabla de paginas
+                                            // crea cualquier pagina requerida para la tabla de paginas.
                                             // retorna la direccion de donde fue creada en la tabla pgdir.
-      return -1; // no fue posible mapear, debido a que el walkpgdir no pudo asignar la memoria
+      return -1; // no fue posible mapear, debido a que el walkpgdir no pudo asignar la memoria o alloc no es 1
 801084ba:	b8 ff ff ff ff       	mov    $0xffffffff,%eax
 801084bf:	eb 46                	jmp    80108507 <mappages+0x92>
     if(*pte & PTE_P)
@@ -16052,7 +16052,7 @@ copyuvm(pde_t *pgdir, uint sz)
     if (!only_map) { 
 80108bf9:	83 7d e0 00          	cmpl   $0x0,-0x20(%ebp)
 80108bfd:	75 6a                	jne    80108c69 <copyuvm+0x10a>
-      if((mem = kalloc()) == 0)
+      if((mem = kalloc()) == 0) // el kalloc no pudo asignar la memoria
 80108bff:	e8 ba 9e ff ff       	call   80102abe <kalloc>
 80108c04:	89 45 dc             	mov    %eax,-0x24(%ebp)
 80108c07:	83 7d dc 00          	cmpl   $0x0,-0x24(%ebp)

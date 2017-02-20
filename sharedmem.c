@@ -74,7 +74,7 @@ shm_close(int key)
   }  
   shmtable.sharedmemory[key].refcount--; // encontre la direccion, luego decremento refcount.
   if (shmtable.sharedmemory[key].refcount == 0){ 
-    shmtable.sharedmemory[key].refcount = -1; // lo dejo en -1, listo para poder luego utilizarlo al espacio de memoria.
+    shmtable.sharedmemory[key].refcount = -1; // reinicio el espacio en el arreglo, como solo quedo uno, lo reinicio.
   }
   release(&shmtable.lock);
   return 0;  // todo en orden
