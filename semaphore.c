@@ -50,7 +50,7 @@ int semget(int sem_id, int init_value){
 			if (*(r = checkprocsem()) == 0)
 				goto found;
 			release(&stable.lock);
-			return -2; // el proceso ya obtuvo el numero maximo d semaforos
+			return -2; // el proceso ya obtuvo el numero maximo de semaforos
 		}
 		release(&stable.lock);
 		return -3; // no ahi mas semaforos disponibles en el sistema
