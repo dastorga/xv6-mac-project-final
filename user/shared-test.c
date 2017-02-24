@@ -54,7 +54,7 @@ test(){
   printf(1,"init index= %d  \n" , *index );
   printf(1,"init index= %d  \n" , &index );
 
-  shm_get(keyIndex, &index); // tomo el espacio de memoria creado anteriormente
+  shm_get(keyIndex, &index); // map
 
   pid = fork(); // creo un proceso (hijo) - printf(1,"pid= %d  \n" , pid );
   *index = 3;

@@ -27,7 +27,7 @@ produce( char* memProducer)
 {
   printf(1,"-- Inicia Productor --\n");
   int i;
-  for(i = 0; i < CONSUMERS; i++){ // el i va hasta 10
+  for(i = 0; i < CONSUMERS; i++){  // 10
     semdown(semprod); // empty
     semdown(sembuff); // mutex
     //  REGION CRITICA
@@ -46,7 +46,7 @@ consume(char* memConsumer)
   
   printf(1,"-- Inicia Consumidor --\n");
   int i;
-  for(i = 0; i < PRODUCERS; i++){ // hasta 20
+  for(i = 0; i < PRODUCERS; i++){  // 20
     //printf(1,"consumer obtiene\n");
     semdown(semcom);
     semdown(sembuff);
@@ -108,6 +108,7 @@ main(void)
     }
     // launch producer process
     if(pid_prod == 0){ // hijo
+      printf(1," # hijo productor\n");
       shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);
@@ -126,6 +127,7 @@ main(void)
     }
     // launch consumer process
     if(pid_com == 0){ // hijo
+      printf(1," # hijo consumidor\n");
       shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);

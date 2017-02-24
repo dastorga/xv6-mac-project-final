@@ -385,7 +385,7 @@ scheduler(void)
       // before jumping back to us.
       // proc = p; // p->state == RUNNABLE
       
-      switchuvm(p); 
+      switchuvm(p); // Switch TSS and h/w page table to correspond to process p.
       p->state = RUNNING;
       p->ticksProc = 0;  // New - when a proccess takes control, set ticksCounter on zero
       //cprintf("proccess %s takes control of the CPU...\n",p->name);
