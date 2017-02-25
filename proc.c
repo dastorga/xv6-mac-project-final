@@ -378,7 +378,7 @@ scheduler(void)
 
     // If pointer not null (RUNNABLE proccess found)
     if (p) {
-      proc = p;
+      proc = p; //(ahora, el proceso actual en esta cpu).
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
