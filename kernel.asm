@@ -8343,7 +8343,7 @@ scheduler(void)
     if (p) {
 80104920:	83 7d f0 00          	cmpl   $0x0,-0x10(%ebp)
 80104924:	74 57                	je     8010497d <scheduler+0xac>
-      proc = p;
+      proc = p; //(ahora, el proceso actual en esta cpu).
 80104926:	8b 45 f0             	mov    -0x10(%ebp),%eax
 80104929:	65 a3 04 00 00 00    	mov    %eax,%gs:0x4
       // Switch to chosen process.  It is the process's job
@@ -8351,7 +8351,7 @@ scheduler(void)
       // before jumping back to us.
       // proc = p; // p->state == RUNNABLE
       
-      switchuvm(p); 
+      switchuvm(p); // Switch TSS and h/w page table to correspond to process p.
 8010492f:	8b 45 f0             	mov    -0x10(%ebp),%eax
 80104932:	89 04 24             	mov    %eax,(%esp)
 80104935:	e8 c0 3c 00 00       	call   801085fa <switchuvm>
