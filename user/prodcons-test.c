@@ -46,16 +46,16 @@ consume(char* memConsumer)
   
   printf(1,"-- Inicia Consumidor --\n");
   int i;
-  for(i = 0; i < PRODUCERS; i++){  // 20
+  for(i = 0; i < PRODUCERS; i++){  // 20 con el MAX_IT * PRODUCERS
     //printf(1,"consumer obtiene\n");
-    semdown(semcom);
-    semdown(sembuff);
+    semdown(semcom); // full
+    semdown(sembuff); // mutex
     // REGION CRITICA
     *memConsumer= ((int)*memConsumer) - 1;
     // 
     printf(1,"Consumidor libera, actualizo a [%x]\n", *memConsumer);
-    semup(sembuff);
-    semup(semprod);
+    semup(sembuff); // mutex
+    semup(semprod); // empty
     printf(1,"-- Termina Consumidor --\n");
   }
 }
@@ -67,9 +67,9 @@ main(void)
 {
   int k;  
   char* mem= 0;
-  k = shm_create(); // creo espacio de memoria que sera para compartir
+  k = shm_create();  // creo espacio de memoria que sera para compartir
   shm_get(k,&mem);  // mapeo el espacio 
-  *mem = (int)8;  // inicialmente con 8 
+  *mem = (int)8;   // inicialmente con 8 
 
   int pid_prod, pid_com, i;
   printf(1,"-------------------------- VALOR INICIAL: [%x] \n", *mem);
@@ -99,7 +99,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS; i++) {
+  for (i = 0; i < PRODUCERS; i++) { // 10 por 4 = 40
     // create producer process
     pid_prod = fork();
     if(pid_prod < 0){
@@ -118,7 +118,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < CONSUMERS; i++) {
+  for (i = 0; i < CONSUMERS; i++) { // 2 por 20 = 40
     // create consumer process
     pid_com = fork();
     if(pid_com < 0){
@@ -137,7 +137,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // espero 6 wait
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 wait
     wait();
   }
    
