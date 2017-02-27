@@ -76,27 +76,27 @@ main(void)
   printf(1,"--- Tamaño de buffer: %d\n", BUFF_SIZE);
   
   // init buffer file
-    for (i = 0; i < NUMSEM; i++) {
-      // create producer semaphore
-      semprod = semget(-1,BUFF_SIZE); // empty
-      if(semprod < 0){
-        printf(1,"invalid semprod \n");
-        exit();
-      }
+  for (i = 0; i < NUMSEM; i++) {
+    // create producer semaphore
+    semprod = semget(-1,BUFF_SIZE); // empty
+    if(semprod < 0){
+      printf(1,"invalid semprod \n");
+      exit();
+    }
     
-      // create consumer semaphore
-      semcom = semget(-1,0); // full
-      if(semcom < 0){
-        printf(1,"invalid semcom\n");
-        exit();
-      }
+    // create consumer semaphore
+    semcom = semget(-1,0); // full
+    if(semcom < 0){
+      printf(1,"invalid semcom\n");
+      exit();
+    }
     
-      // create buffer semaphore
-      sembuff = semget(-1,1); // mutex
-      if(sembuff < 0){
-        printf(1,"invalid sembuff\n");
-        exit();
-      }
+    // create buffer semaphore
+    sembuff = semget(-1,1); // mutex
+    if(sembuff < 0){
+      printf(1,"invalid sembuff\n");
+      exit();
+    }
   }
 
   for (i = 0; i < PRODUCERS; i++) {
