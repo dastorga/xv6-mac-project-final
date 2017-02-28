@@ -181,6 +181,7 @@ UPROGS=\
 	_zombie\
 	_prodcons-test\
 	_shared-test\
+	_prodconsemaphore-test\
 	_zz\
 	_lseek-test
 
@@ -252,7 +253,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c cp.c echo.c forktest.c grep.c isatty-test.c kill.c\
 	ln.c ls.c mkdir.c mv.c quantum-test.c rm.c sleep.c stressfs.c uptime.c usertests.c wc.c zombie.c prodcons-test.c shared-test.c\
-	printf.c umalloc.c zz.c lseek-test.c\
+	printf.c umalloc.c zz.c lseek-test.c prodconsemaphore-test.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 

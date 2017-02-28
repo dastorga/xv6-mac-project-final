@@ -23,7 +23,7 @@ int semcom;
 int sembuff;
 
 void
-produce( char* memProducer)
+productor( char* memProducer)
 {
   printf(1,"-- Inicia Productor --\n");
   int i;
@@ -41,7 +41,7 @@ produce( char* memProducer)
 }
 
 void
-consume(char* memConsumer)
+consumidor(char* memConsumer)
 { //shm_get(key, &memConsumer);
   
   printf(1,"-- Inicia Consumidor --\n");
@@ -60,33 +60,32 @@ consume(char* memConsumer)
   }
 }
 
-// print process list running in the system 
-// calling system procstat
+
 int
 main(void)
 {
   int k;  
-  *mem = (int)8;   // inicialmente con 8 
+  *mem = (int)8;   // inicio con 8
 
   int pid_productor, pid_consumidor, i;
   printf(1,"-------------------------- VALOR INICIAL: [%x] \n", *mem);
   printf(1,"--- Tamaño de buffer: %d\n", BUFF_SIZE);
   
-  // create producer semaphore
+  // creo semaforo productor
   semprod = semget(-1,BUFF_SIZE); // empty
   if(semprod < 0){
     printf(1,"invalid semprod \n");
     exit();
   }
   
-  // create consumer semaphore
+  // creo semaforo consumidor 
   semcom = semget(-1,0); // full
   if(semcom < 0){
     printf(1,"invalid semcom\n");
     exit();
   }
   
-  // create buffer semaphore
+  // creo semaforo buffer 
   sembuff = semget(-1,1); // mutex
   if(sembuff < 0){
     printf(1,"invalid sembuff\n");
@@ -103,11 +102,10 @@ main(void)
     // launch producer process
     if(pid_productor == 0){ // hijo
       printf(1," # hijo productor\n");
-      shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);
       semget(sembuff,0);
-      produce(mem);
+      productor(mem);
       exit();
     }
   }
@@ -122,11 +120,10 @@ main(void)
     // launch consumer process
     if(pid_consumidor == 0){ // hijo
       printf(1," # hijo consumidor\n");
-      shm_get(k, &mem);
       semget(semprod,0);
       semget(semcom,0);
       semget(sembuff,0);
-      consume(mem);
+      consumidor(mem);
       exit();
     }
   }
