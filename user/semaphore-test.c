@@ -61,9 +61,11 @@ consumidor(char* memConsumer)
 int
 main(void)
 {
+
+
   char* mem= 0;
   *mem = (int)8;   // inicio con 8
-  // int pid_productor, pid_consumidor, i;
+  int pid_productor, pid_consumidor, i;
 
   printf(1,"-------------------------- VALOR INICIAL: [%x] \n", *mem);
   printf(1,"--- Tamaño de buffer: %d\n", BUFF_SIZE);

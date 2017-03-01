@@ -233,7 +233,8 @@ fork(void)
   }
 
   // np->state = RUNNABLE;
-  makerunnable(np,0); // New: Added in proyect 2: every process enqueued is RUNNABLE
+  makerunnable(np,0); // New: Added in proyect 2: every process enqueued is RUNNABLE.
+                      // en la creacion de un proceso, debemos darle la prioridad mas alta que es 0.
   safestrcpy(np->name, proc->name, sizeof(proc->name));
   return pid;
 }
@@ -388,9 +389,10 @@ scheduler(void)
       switchuvm(p); // Switch TSS and h/w page table to correspond to process p.
       p->state = RUNNING;
       p->ticksProc = 0;  // New - when a proccess takes control, set ticksCounter on zero
-      //cprintf("proccess %s takes control of the CPU...\n",p->name);
+      cprintf("proccess %s takes control of the CPU...\n",p->name);
       swtch(&cpu->scheduler, proc->context);
-      switchkvm();
+      switchkvm(); // Switch h/w page table register to the kernel-only page table,
+                  // for when no process is running.
 
       // Process is done running for now.
       // It should have changed its p->state before coming back.
