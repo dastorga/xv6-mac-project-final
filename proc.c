@@ -77,6 +77,9 @@ isempty(int priority) // New: Added in proyect 2
   return 1;
 }
 
+// Upgrade process priority
+// set state in RUNNABLE
+// and enqueue process in array mlf.
 void
 makerunnable(struct proc *p, int priority) // New: Added in proyect 2
 // level can be: 0, 1, -1
@@ -89,8 +92,8 @@ makerunnable(struct proc *p, int priority) // New: Added in proyect 2
   {
     p->priority--;
   }
-  p->state = RUNNABLE;
-  enqueue(p);
+  p->state = RUNNABLE; 
+  enqueue(p); 
 }
 
 //PAGEBREAK: 32
