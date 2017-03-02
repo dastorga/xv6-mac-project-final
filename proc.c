@@ -68,21 +68,26 @@ dequeue(int priority) // New: Added in proyect 2
   return res;
 }
 
+// if priority level empty return zero, else return one
 int
 isempty(int priority) // New: Added in proyect 2
 {
   if(ptable.mlf[priority].first!=0){
-    return 0; // no esta vacio
+    return 0; 
   }
-  return 1; //esta vacio
+  return 1; 
 }
 
 // Upgrade process priority
 // set state in RUNNABLE and enqueue process in array mlf.
 void
 makerunnable(struct proc *p, int priority) // New: Added in proyect 2
-// level can be: 0, 1, -1
+// priority can be: 0, 1, -1
 {
+  if (priority==0)
+  {
+    p->priority = 0;
+  }
   if (priority==1 && p->priority<SIZEMLF-1)
   {
     p->priority++;
@@ -391,7 +396,7 @@ scheduler(void)
       switchuvm(p); // Switch TSS and h/w page table to correspond to process p.
       p->state = RUNNING;
       p->ticksProc = 0;  // New - when a proccess takes control, set ticksCounter on zero
-      cprintf("proccess %s takes control of the CPU...\n",p->name);
+      // cprintf("proccess %s takes control of the CPU...\n",p->name);
       swtch(&cpu->scheduler, proc->context);
       switchkvm(); // Switch h/w page table register to the kernel-only page table,
                   // for when no process is running.
