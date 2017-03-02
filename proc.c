@@ -72,14 +72,13 @@ int
 isempty(int priority) // New: Added in proyect 2
 {
   if(ptable.mlf[priority].first!=0){
-    return 0;
+    return 0; // no esta vacio
   }
-  return 1;
+  return 1; //esta vacio
 }
 
 // Upgrade process priority
-// set state in RUNNABLE
-// and enqueue process in array mlf.
+// set state in RUNNABLE and enqueue process in array mlf.
 void
 makerunnable(struct proc *p, int priority) // New: Added in proyect 2
 // level can be: 0, 1, -1
