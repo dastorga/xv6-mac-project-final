@@ -211,14 +211,14 @@ fork(void)
 
   // Allocate process.
   if((np = allocproc()) == 0)
-    return -1;
+    return -1; // no encontro ningun UNUSED proc
 
   // Copy process state from p.
   if((np->pgdir = copyuvm(proc->pgdir, proc->sz)) == 0){
-    kfree(np->kstack);
+    kfree(np->kstack); // por que dentro del allocproc hice:  Allocate kernel stack.
     // np->kstack = 0;
     np->state = UNUSED;
-    return -1;
+    return -1; // error en la copia del estado
   }
   np->sz = proc->sz;
   np->parent = proc;
