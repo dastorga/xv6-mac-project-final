@@ -497,7 +497,7 @@ sleep(void *chan, struct spinlock *lk)
   sched();
 
   // Tidy up.
-  proc->chan = 0;
+  proc->chan = 0; // If non-zero, sleeping on chan
 
   // Reacquire original lock.
   if(lk != &ptable.lock){  //DOC: sleeplock2
@@ -543,7 +543,7 @@ kill(int pid)
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
-      p->killed = 1;
+      p->killed = 1; // killed: If non-zero, have been killed
       // Wake process from sleep if necessary.
       // if(p->state == SLEEPING)
       //   p->state = RUNNABLE;
@@ -570,7 +570,7 @@ procdump(void)
   [UNUSED]    "unused",
   [EMBRYO]    "embryo",
   [SLEEPING]  "sleep ",
-  [RUNNABLE]  "runble",
+  [RUNNABLE]  "runnable",
   [RUNNING]   "run   ",
   [ZOMBIE]    "zombie"
   };
