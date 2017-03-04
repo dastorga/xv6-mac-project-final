@@ -20,7 +20,7 @@ produce( char* memProducer)
    e:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   15:	e8 4c 08 00 00       	call   866 <printf>
   int i;
-  for(i = 0; i < MAX_IT * CONSUMERS; i++){  // 10
+  for(i = 0; i < MAX_IT * CONSUMERS; i++){  // (MAX_IT * CONSUMERS) 2 * 5 = 10
   1a:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
   21:	eb 78                	jmp    9b <produce+0x9b>
     semdown(semprod); // empty
@@ -62,7 +62,7 @@ produce( char* memProducer)
   8b:	00 
   8c:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   93:	e8 ce 07 00 00       	call   866 <printf>
-  for(i = 0; i < MAX_IT * CONSUMERS; i++){  // 10
+  for(i = 0; i < MAX_IT * CONSUMERS; i++){  // (MAX_IT * CONSUMERS) 2 * 5 = 10
   98:	ff 45 f4             	incl   -0xc(%ebp)
   9b:	83 7d f4 09          	cmpl   $0x9,-0xc(%ebp)
   9f:	7e 82                	jle    23 <produce+0x23>
@@ -86,7 +86,7 @@ consume(char* memConsumer)
   b1:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   b8:	e8 a9 07 00 00       	call   866 <printf>
   int i;
-  for(i = 0; i < MAX_IT * PRODUCERS; i++){  // 20 con el MAX_IT * PRODUCERS
+  for(i = 0; i < MAX_IT * PRODUCERS; i++){  // (MAX_IT * PRODUCERS) 5 * 4 = 20
   bd:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
   c4:	eb 78                	jmp    13e <consume+0x9b>
     //printf(1,"consumer obtiene\n");
@@ -129,7 +129,7 @@ consume(char* memConsumer)
  12e:	00 
  12f:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  136:	e8 2b 07 00 00       	call   866 <printf>
-  for(i = 0; i < MAX_IT * PRODUCERS; i++){  // 20 con el MAX_IT * PRODUCERS
+  for(i = 0; i < MAX_IT * PRODUCERS; i++){  // (MAX_IT * PRODUCERS) 5 * 4 = 20
  13b:	ff 45 f4             	incl   -0xc(%ebp)
  13e:	83 7d f4 13          	cmpl   $0x13,-0xc(%ebp)
  142:	7e 82                	jle    c6 <consume+0x23>
@@ -254,7 +254,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS; i++) { // 10 por 4 = 40
+  for (i = 0; i < PRODUCERS+1; i++) { // 10 por 4 = 40
  285:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%esp)
  28c:	00 
  28d:	e9 ac 00 00 00       	jmp    33e <main+0x1f8>
@@ -306,15 +306,15 @@ main(void)
  320:	00 
  321:	89 04 24             	mov    %eax,(%esp)
  324:	e8 2d 04 00 00       	call   756 <semget>
-      produce(mem);
+      produce(mem); // 10
  329:	8b 44 24 1c          	mov    0x1c(%esp),%eax
  32d:	89 04 24             	mov    %eax,(%esp)
  330:	e8 cb fc ff ff       	call   0 <produce>
       exit();
  335:	e8 5c 03 00 00       	call   696 <exit>
-  for (i = 0; i < PRODUCERS; i++) { // 10 por 4 = 40
+  for (i = 0; i < PRODUCERS+1; i++) { // 10 por 4 = 40
  33a:	ff 44 24 2c          	incl   0x2c(%esp)
- 33e:	83 7c 24 2c 03       	cmpl   $0x3,0x2c(%esp)
+ 33e:	83 7c 24 2c 04       	cmpl   $0x4,0x2c(%esp)
  343:	0f 8e 49 ff ff ff    	jle    292 <main+0x14c>
     }
   }
@@ -371,7 +371,7 @@ main(void)
  3e4:	00 
  3e5:	89 04 24             	mov    %eax,(%esp)
  3e8:	e8 69 03 00 00       	call   756 <semget>
-      consume(mem);
+      consume(mem); // 20
  3ed:	8b 44 24 1c          	mov    0x1c(%esp),%eax
  3f1:	89 04 24             	mov    %eax,(%esp)
  3f4:	e8 aa fc ff ff       	call   a3 <consume>
