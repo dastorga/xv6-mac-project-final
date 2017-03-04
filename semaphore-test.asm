@@ -20,7 +20,7 @@ productor( char* memProducer)
    e:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   15:	e8 d1 07 00 00       	call   7eb <printf>
   int i;
-  for(i = 0; i < 4; i++){ 
+  for(i = 0; i < PRODUCERS; i++){ 
   1a:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
   21:	eb 78                	jmp    9b <productor+0x9b>
     semdown(semprod); // empty
@@ -62,7 +62,7 @@ productor( char* memProducer)
   8b:	00 
   8c:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   93:	e8 53 07 00 00       	call   7eb <printf>
-  for(i = 0; i < 4; i++){ 
+  for(i = 0; i < PRODUCERS; i++){ 
   98:	ff 45 f4             	incl   -0xc(%ebp)
   9b:	83 7d f4 03          	cmpl   $0x3,-0xc(%ebp)
   9f:	7e 82                	jle    23 <productor+0x23>
@@ -85,7 +85,7 @@ consumidor(char* memConsumer)
   b1:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
   b8:	e8 2e 07 00 00       	call   7eb <printf>
   int i;
-  for(i = 0; i < 2; i++){
+  for(i = 0; i < CONSUMERS; i++){
   bd:	c7 45 f4 00 00 00 00 	movl   $0x0,-0xc(%ebp)
   c4:	eb 78                	jmp    13e <consumidor+0x9b>
     semdown(semcom); // full
@@ -127,7 +127,7 @@ consumidor(char* memConsumer)
  12e:	00 
  12f:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  136:	e8 b0 06 00 00       	call   7eb <printf>
-  for(i = 0; i < 2; i++){
+  for(i = 0; i < CONSUMERS; i++){
  13b:	ff 45 f4             	incl   -0xc(%ebp)
  13e:	83 7d f4 01          	cmpl   $0x1,-0xc(%ebp)
  142:	7e 82                	jle    c6 <consumidor+0x23>

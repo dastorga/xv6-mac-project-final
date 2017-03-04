@@ -1,4 +1,4 @@
-// Ejemplo de Productor-Consumidor con "semaforos"
+// Ejemplo de Productor-Consumidor con "semaforos" no me anda
 //
 // Recordar: 
 // * acceso al contenido
@@ -27,7 +27,7 @@ productor( char* memProducer)
 {
   printf(1,"-- Inicia Productor --\n");
   int i;
-  for(i = 0; i < 4; i++){ 
+  for(i = 0; i < PRODUCERS; i++){ 
     semdown(semprod); // empty
     semdown(sembuff); // mutex
     //  REGION CRITICA
@@ -45,7 +45,7 @@ consumidor(char* memConsumer)
 { 
   printf(1,"-- Inicia Consumidor --\n");
   int i;
-  for(i = 0; i < 2; i++){
+  for(i = 0; i < CONSUMERS; i++){
     semdown(semcom); // full
     semdown(sembuff); // mutex
     // REGION CRITICA

@@ -125,7 +125,7 @@ int semdown(int sem_id){
 		return -1; // error!!
 	}
 	while (s->value == 0)
-	sleep(s, &stable.lock); 
+		sleep(s, &stable.lock); 
 
 	s->value--;
 	// cprintf("SEMDOWN>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s, s->value, s->refcount);
