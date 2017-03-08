@@ -274,6 +274,7 @@ exit(void)
   }
 
   proc->shmemquantity = 0;
+  proc->semquantity = 0;
 
   begin_trans(); //add hoy dario, no estoy seguro // begin_op en linux creo
   iput(proc->cwd);

@@ -31,7 +31,7 @@ struct sem* getstable(){
 
 // crea u obtiene un descriptor de un semaforo existente
 int semget(int sem_id, int init_value){
-	 int i;
+	int i;
 	struct sem *t;
 	struct sem *s;
 	struct sem **r;
@@ -58,6 +58,7 @@ int semget(int sem_id, int init_value){
 		found:
 		s->value = init_value;
 		s->refcount=1;
+		proc->semquantity++; // new
 		*r = s;
 
 		cprintf("SEMGET>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s - stable.sem, s->value, s->refcount);
@@ -69,6 +70,7 @@ int semget(int sem_id, int init_value){
 		}
 
 		release(&stable.lock);
+		cprintf("cantidad de semaforos del proceso hasta aca --->%d\n", proc->semquantity);
 		return s - stable.sem;	// retorna el semaforo
 
 	} else { // en caso de que NO se desea crear un semaforo nuevo
@@ -78,9 +80,9 @@ int semget(int sem_id, int init_value){
 			return -1; // el semaforo con ese "sem_id" no esta en uso 
 		}else if (*(r = checkprocsem()) == 0){
 			*r = s;
-			s->refcount++;
+			s->refcount++; //aumento referencia
 			release(&stable.lock);
-			return sem_id;
+			return sem_id; // retorno identificador del semaforo
 		}	else {
 			release(&stable.lock);
 			return -2; // el proceso ya obtuvo el maximo de semaforos
@@ -105,6 +107,7 @@ int semfree(int sem_id){
 			*r = 0;
 			acquire(&stable.lock);
 			s->refcount--; // disminuyo el contador, debido a q es un semaforo q se va.
+			proc->semquantity--; // new
 			release(&stable.lock);
 			return 0;
 		}
