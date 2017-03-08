@@ -254,7 +254,7 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS+1; i++) { // 10 por 4 = 40
+  for (i = 0; i < PRODUCERS; i++) { // 10 por 4 = 40
  285:	c7 44 24 2c 00 00 00 	movl   $0x0,0x2c(%esp)
  28c:	00 
  28d:	e9 ac 00 00 00       	jmp    33e <main+0x1f8>
@@ -312,9 +312,9 @@ main(void)
  330:	e8 cb fc ff ff       	call   0 <produce>
       exit();
  335:	e8 5c 03 00 00       	call   696 <exit>
-  for (i = 0; i < PRODUCERS+1; i++) { // 10 por 4 = 40
+  for (i = 0; i < PRODUCERS; i++) { // 10 por 4 = 40
  33a:	ff 44 24 2c          	incl   0x2c(%esp)
- 33e:	83 7c 24 2c 04       	cmpl   $0x4,0x2c(%esp)
+ 33e:	83 7c 24 2c 03       	cmpl   $0x3,0x2c(%esp)
  343:	0f 8e 49 ff ff ff    	jle    292 <main+0x14c>
     }
   }

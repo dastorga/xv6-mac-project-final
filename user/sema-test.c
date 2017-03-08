@@ -21,6 +21,8 @@ int buffer;
 int semprod;
 int semcom;
 int sembuff;
+int semprueba;
+int semprueba2;
 
 void
 productor(int val)
@@ -62,22 +64,40 @@ main(void)
   
   // creo semaforo productor 
   semprod = semget(-1,BUFF_SIZE); // empty
+  // semprod es cero
   if(semprod < 0){
     printf(1,"invalid semprod \n");
     exit();
   }
   // creo semaforo consumidor
-  semcom = semget(-1,0); // full
+  semcom = semget(-1,0); // full   // printf(1,"LOG semprod %d\n", semcom);
   if(semcom < 0){
     printf(1,"invalid semcom\n");
     exit();
   }
   // creo semaforo buffer
-  sembuff = semget(-1,1); // mutex
+  sembuff = semget(-1,1); // mutex // printf(1,"LOG semprod %d\n", sembuff);
   if(sembuff < 0){
     printf(1,"invalid sembuff\n");
     exit();
   }
+
+
+  // CREO SEMAFORO DE PRUEBA
+  semprueba = semget(-1,5); // prueba
+  printf(1,"LOG: identificador del semaforo: %d\n", semprueba); 
+  if(sembuff < 0){
+    printf(1,"invalid semprueba\n");
+    exit();
+  }
+
+  semprueba2 = semget(-1,6); // prueba
+  printf(1,"LOG: identificador del semaforo: %d\n", semprueba2); 
+  if(sembuff < 0){
+    printf(1,"invalid semprueba2\n");
+    exit();
+  }
+
 
   for (i = 0; i < 4; i++) { 
     semget(semprod,0);

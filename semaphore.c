@@ -31,7 +31,7 @@ struct sem* getstable(){
 
 // crea u obtiene un descriptor de un semaforo existente
 int semget(int sem_id, int init_value){
-	// int i;
+	 int i;
 	struct sem *t;
 	struct sem *s;
 	struct sem **r;
@@ -60,16 +60,16 @@ int semget(int sem_id, int init_value){
 		s->refcount=1;
 		*r = s;
 
-		// cprintf("SEMGET>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s - stable.sem, s->value, s->refcount);
-		// for (i = 0; i < MAXSEMPROC; i++) {
-		// 	if (*(proc->procsem + i) == 0) {
-		// 		cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i));
-		// 	} else
-		// 		cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i) - stable.sem);
-		// }
+		cprintf("SEMGET>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s - stable.sem, s->value, s->refcount);
+		for (i = 0; i < MAXSEMPROC; i++) {
+			if (*(proc->procsem + i) == 0) {
+				cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i));
+			} else
+				cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i) - stable.sem);
+		}
 
 		release(&stable.lock);
-		return s - stable.sem;	
+		return s - stable.sem;	// retorna el semaforo
 
 	} else { // en caso de que NO se desea crear un semaforo nuevo
 		s = stable.sem + sem_id;
