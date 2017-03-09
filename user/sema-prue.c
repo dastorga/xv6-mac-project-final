@@ -94,6 +94,7 @@ test_2(){
 
 }
 
+// Test_3: verifico que a la hora de obtener el semaforo no aunmente el semquantity (quenada tiene que ver)
 void
 test_3(){
   semprod = semget(-1,4); 
@@ -102,6 +103,7 @@ test_3(){
     printf(1,"Error! en la creacion del semaforo\n");
     exit();
   }
+  // lo obtengo tres veces
   semprod = semget(0,4); 
   semprod = semget(0,4); 
   semprod = semget(0,4); 
@@ -113,7 +115,7 @@ main(void)
   //test_0();
   //test_1();
   //test_2();
-  test_3();
+  //test_3();
 
   exit();
 }
