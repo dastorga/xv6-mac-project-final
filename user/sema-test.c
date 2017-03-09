@@ -13,7 +13,7 @@
 #define PRODUCERS 4
 #define CONSUMERS 2
 #define BUFF_SIZE 4
-#define MAX_IT 5
+//#define MAX_IT 5
 #define NUMSEM 1
 #define N  4
 
@@ -27,37 +27,37 @@ int semprueba2;
 void
 productor(int val)
 {
-  printf(1,"-- Inicia Productor --\n");
+  printf(1,"-- INICIA PRODUCTOR --\n");
   semdown(semprod); // empty
   semdown(sembuff); // mutex
   //  REGION CRITICA
   val = (val) + 1;
-  //
+  printf(1,"-- Produce: %d\n",val);
   semup(sembuff); //mutex
   semup(semcom); // full
-  printf(1,"-- Termina Productor --\n");
+  printf(1,"-- FIN PRODUCTOR --\n");
 }
 
 void
 consumidor(int val)
 { 
-  printf(1,"-- Inicia Consumidor --\n");
+
+  printf(1,"-- INICIA CONSUMIDOR --\n");
   semdown(semcom); // full
   semdown(sembuff); // mutex
   // REGION CRITICA
   val = (val) - 1;
-  //
+  printf(1,"-- Consume: %d\n",val);
   semup(sembuff); // mutex
   semup(semprod); // empty
-  printf(1,"-- Termina Consumidor --\n");
-  //}
+  printf(1,"-- FIN CONSUMIDOR --\n");
 }
 
 int
 main(void)
 {
   int val = 8; 
-  int i;
+  int pid_prod, pid_com, i;
 
   printf(1,"-------------------------- VALOR INICIAL: [%d] \n", val);
   printf(1,"--- Tamaño de buffer: %d\n", BUFF_SIZE);
@@ -70,50 +70,59 @@ main(void)
     exit();
   }
   // creo semaforo consumidor
-  semcom = semget(-1,0); // full   // printf(1,"LOG semprod %d\n", semcom);
+  semcom = semget(-1,0); // full   
   if(semcom < 0){
     printf(1,"invalid semcom\n");
     exit();
   }
   // creo semaforo buffer
-  sembuff = semget(-1,1); // mutex // printf(1,"LOG semprod %d\n", sembuff);
+  sembuff = semget(-1,1); // mutex 
   if(sembuff < 0){
     printf(1,"invalid sembuff\n");
     exit();
   }
 
-
-  // CREO SEMAFORO DE PRUEBA
-  semprueba = semget(-1,5); // prueba
-  printf(1,"LOG: identificador del semaforo: %d\n", semprueba); 
-  if(sembuff < 0){
-    printf(1,"invalid semprueba\n");
-    exit();
+  for (i = 0; i < PRODUCERS; i++) { // 4 productores 
+    // create producer process
+    pid_prod = fork();
+    if(pid_prod < 0){
+      printf(1,"can't create producer process\n");
+      exit(); 
+    }
+    // launch producer process
+    if(pid_prod == 0){ // hijo
+      printf(1," # hijo productor\n");
+      semget(semprod,0);
+      semget(semcom,0);
+      semget(sembuff,0);
+      productor(val); // 10
+      exit();
+    }
   }
 
-  semprueba2 = semget(-1,6); // prueba
-  printf(1,"LOG: identificador del semaforo: %d\n", semprueba2); 
-  if(sembuff < 0){
-    printf(1,"invalid semprueba2\n");
-    exit();
+  for (i = 0; i < CONSUMERS; i++) { // 2 consumidores 
+    // create consumer process
+    pid_com = fork();
+    if(pid_com < 0){
+      printf(1,"can't create consumer process\n");
+      exit(); 
+    }
+    // launch consumer process
+    if(pid_com == 0){ // hijo
+      printf(1," # hijo consumidor\n");
+      semget(semprod,0);
+      semget(semcom,0);
+      semget(sembuff,0);
+      consumidor(val); // 20
+      exit();
+    }
   }
 
-
-  for (i = 0; i < 4; i++) { 
-    semget(semprod,0);
-    semget(semcom,0);
-    semget(sembuff,0);
-    productor(val);
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 wait
+    wait();
   }
-
-  for (i = 0; i < 3; i++) { 
-    semget(semprod,0);
-    semget(semcom,0);
-    semget(sembuff,0);
-    consumidor(val); 
-  }
-
-  printf(1,"-------------------------- VALOR FINAL: [%d]  \n", val);
+   
+  printf(1,"-------------------------- VALOR FINAL: [%x]  \n", val);
   exit();
 }
 

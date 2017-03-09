@@ -272,7 +272,7 @@ test_2(){
 
 00000320 <test_3>:
 
-// Test_3: verifico que a la hora de obtener el semaforo no aunmente el semquantity (quenada tiene que ver)
+// Test_3: verifico que a la hora de obtener el semaforo no aunmente el semquantity (que nada tiene que ver)
 void
 test_3(){
  320:	55                   	push   %ebp

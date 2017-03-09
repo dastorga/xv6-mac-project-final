@@ -1,4 +1,4 @@
-// Pruebas para semaforo.
+// Pruebas para verificar el funcionamiento correcto del semaforo. (semaphore.c)
 
 #include "types.h"
 #include "user.h"
@@ -94,7 +94,7 @@ test_2(){
 
 }
 
-// Test_3: verifico que a la hora de obtener el semaforo no aunmente el semquantity (quenada tiene que ver)
+// Test_3: verifico que a la hora de obtener el semaforo no aunmente el semquantity (que nada tiene que ver)
 void
 test_3(){
   semprod = semget(-1,4); 
