@@ -1,8 +1,9 @@
 // Ejemplo de Productor consumidor.
-//   // printf(1,"LOG semprod %d\n", semprod);
+//   
 // Recordar: 
 // * acceso al contenido
 // & obtension de la direccion
+// printf(1,"LOG semprod %d\n", semprod);
 
 #include "types.h"
 #include "user.h"
@@ -13,8 +14,6 @@
 #define PRODUCERS 4
 #define CONSUMERS 2
 #define BUFF_SIZE 4
-//#define MAX_IT 5
-#define NUMSEM 1
 #define N  4
 
 int buffer;
@@ -41,7 +40,6 @@ productor(int val)
 void
 consumidor(int val)
 { 
-
   printf(1,"-- INICIA CONSUMIDOR --\n");
   semdown(semcom); // full
   semdown(sembuff); // mutex
@@ -95,7 +93,7 @@ main(void)
       semget(semprod,0);
       semget(semcom,0);
       semget(sembuff,0);
-      productor(val); // 10
+      productor(val); 
       exit();
     }
   }
@@ -113,21 +111,18 @@ main(void)
       semget(semprod,0);
       semget(semcom,0);
       semget(sembuff,0);
-      consumidor(val); // 20
+      consumidor(val); 
       exit();
     }
   }
 
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 wait
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 
     wait();
   }
    
   printf(1,"-------------------------- VALOR FINAL: [%x]  \n", val);
   exit();
 }
-
-
-
 
 
 

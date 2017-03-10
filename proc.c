@@ -120,13 +120,13 @@ allocproc(void)
 
 found:
   p->state = EMBRYO;
-  p->pid = nextpid++;
+  p->pid = nextpid++; // le asigna 1 y luego aumenta la variable "nextpid"
   release(&ptable.lock);
 
   p->priority=0; // New: Added in proyect 2: set priority in zero 
 
   // Allocate kernel stack.
-  if((p->kstack = kalloc()) == 0){
+  if((p->kstack = kalloc()) == 0){ // si me retorna cero, pues no pudo ser alojada
     p->state = UNUSED;
     return 0;
   }
@@ -155,14 +155,14 @@ void
 userinit(void)
 {
   struct proc *p;
-  extern char _binary_initcode_start[], _binary_initcode_size[];
+  extern char _binary_initcode_start[], _binary_initcode_size[]; // codigo de inicio y su longitud
   
-  p = allocproc();
+  p = allocproc(); // en p, me queda un proceso en estado EMBRYO
   initproc = p;
   if((p->pgdir = setupkvm()) == 0)
-    panic("userinit: out of memory?");
-  inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
-  p->sz = PGSIZE;
+    panic("userinit: out of memory?"); // no ahi memoria
+  inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size); //carga el _binary_initcode_start desde la direccion 0 hasta p->pgdir 
+  p->sz = PGSIZE; // actaliza el sz de la tabla, por que ya mapeo el primer espacio
   memset(p->tf, 0, sizeof(*p->tf));
   p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
   p->tf->ds = (SEG_UDATA << 3) | DPL_USER;

@@ -193,9 +193,9 @@ inituvm(pde_t *pgdir, char *init, uint sz)
   char *mem;
   
   if(sz >= PGSIZE)
-    panic("inituvm: more than a page");
-  mem = kalloc();
-  memset(mem, 0, PGSIZE);
+    panic("inituvm: more than a page"); // (int)_binary_initcode_size, no puede ser mas grade que una pagina
+  mem = kalloc(); // mem es una direccion virtual, de donde se encuentra alojada la memoria fisica creada por el kalloc()
+  memset(mem, 0, PGSIZE); // se va usar, la seteo con 0
   mappages(pgdir, 0, PGSIZE, v2p(mem), PTE_W|PTE_U);
   memmove(mem, init, sz);
 }

@@ -61,16 +61,16 @@ int semget(int sem_id, int init_value){
 		proc->semquantity++; // new
 		*r = s;
 
-		cprintf("SEMGET>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s - stable.sem, s->value, s->refcount);
-		for (i = 0; i < MAXSEMPROC; i++) {
-			if (*(proc->procsem + i) == 0) {
-				cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i));
-			} else
-				cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i) - stable.sem);
-		}
+		// cprintf("SEMGET>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s - stable.sem, s->value, s->refcount);
+		// for (i = 0; i < MAXSEMPROC; i++) {
+		// 	if (*(proc->procsem + i) == 0) {
+		// 		cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i));
+		// 	} else
+		// 		cprintf("SEMGET>> proc_sem_id = %d\n", *(proc->procsem + i) - stable.sem);
+		// }
 
 		release(&stable.lock);
-		cprintf("cantidad de semaforos del proceso hasta aca --->%d\n", proc->semquantity);
+		// cprintf("cantidad de semaforos del proceso hasta aca --->%d\n", proc->semquantity);
 		return s - stable.sem;	// retorna el semaforo
 
 	} else { // en caso de que NO se desea crear un semaforo nuevo
@@ -86,7 +86,6 @@ int semget(int sem_id, int init_value){
 		}	else {
 			release(&stable.lock);
 			return -2; // el proceso ya obtuvo el maximo de semaforos
-
 		}
 	}
 }
@@ -129,7 +128,7 @@ int semdown(int sem_id){
 	}
 	while (s->value == 0)
 		sleep(s, &stable.lock); 
-
+	
 	s->value--;
 	// cprintf("SEMDOWN>> sem_id = %d, semaforo %d, valor = %d, refcount = %d\n", sem_id, s, s->value, s->refcount);
 	release(&stable.lock);
