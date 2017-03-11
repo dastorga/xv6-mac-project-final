@@ -31,7 +31,7 @@ struct sem* getstable(){
 
 // crea u obtiene un descriptor de un semaforo existente
 int semget(int sem_id, int init_value){
-	int i;
+	// int i;
 	struct sem *t;
 	struct sem *s;
 	struct sem **r;

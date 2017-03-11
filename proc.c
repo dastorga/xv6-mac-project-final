@@ -172,7 +172,7 @@ userinit(void)
   p->tf->esp = PGSIZE;
   p->tf->eip = 0;  // beginning of initcode.S
 
-  safestrcpy(p->name, "initcode", sizeof(p->name));
+  safestrcpy(p->name, "initcode", sizeof(p->name)); // guardar el nombre del programa para el debugging.
   p->cwd = namei("/");
 
   // p->state = RUNNABLE;
@@ -183,19 +183,19 @@ userinit(void)
 // Grow current process's memory by n bytes.
 // Return 0 on success, -1 on failure.
 int
-growproc(int n)
+growproc(int n) // incrementa la memoria del proceso corriente "n" bytes.
 {
   uint sz;
   
-  sz = proc->sz;
-  if(n > 0){
-    if((sz = allocuvm(proc->pgdir, sz, sz + n)) == 0)
-      return -1;
-  } else if(n < 0){
-    if((sz = deallocuvm(proc->pgdir, sz, sz + n)) == 0)
-      return -1;
+  sz = proc->sz; // guardo en sz la memoria actual del proceso
+  if(n > 0){ // si el n es positivo y mayor a cero, es por que se quiere agrandar la memoria.
+    if((sz = allocuvm(proc->pgdir, sz, sz + n)) == 0) // allocuvm, me retorna el numero tamaño de memoria del proceso si todo salio bien
+      return -1; // error                             // el allocuvm va hacer crecer el tamaño de la memoria delproceso
+  } else if(n < 0){ // si el n es nagativo, es por que se quiere achicar la memoria del proceso corriente.
+    if((sz = deallocuvm(proc->pgdir, sz, sz + n)) == 0) 
+      return -1; // error                      
   }
-  proc->sz = sz;
+  proc->sz = sz; // recien aqui actualizo el tamaño de la memoria del proceso corriente
   switchuvm(proc);
   return 0;
 }
@@ -320,13 +320,13 @@ wait(void)
     // Scan through table looking for zombie children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc)
+      if(p->parent != proc) // entonces es hijo
         continue;
       havekids = 1;
-      if(p->state == ZOMBIE){
-        // Found one.
-        pid = p->pid;
-        kfree(p->kstack);
+      if(p->state == ZOMBIE){ // si el estado es ZOMBIE, por que viene despues de un exit().
+        // encontro uno.
+        pid = p->pid; // actualizo el pid
+        kfree(p->kstack); // hace un kfree del pie de la pila del kernel para este proceso
         p->kstack = 0;
         freevm(p->pgdir);
         p->state = UNUSED;
@@ -335,19 +335,19 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         release(&ptable.lock);
-        return pid;
+        return pid; // pid del hijo que salio
       }
     }
 
     // No point waiting if we don't have any children.
     if(!havekids || proc->killed){
       release(&ptable.lock);
-      return -1;
+      return -1; // si no ahi hijos
     }
 
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(proc, &ptable.lock);  //DOC: wait-sleep
-  }
+  } // manda al proceso corriente a esperar
 }
 
 //PAGEBREAK: 42

@@ -62,7 +62,6 @@ consumidor(int val)
   82:	55                   	push   %ebp
   83:	89 e5                	mov    %esp,%ebp
   85:	83 ec 18             	sub    $0x18,%esp
-
   printf(1,"-- INICIA CONSUMIDOR --\n");
   88:	c7 44 24 04 b5 0b 00 	movl   $0xbb5,0x4(%esp)
   8f:	00 
@@ -237,7 +236,7 @@ main(void)
  285:	00 
  286:	89 04 24             	mov    %eax,(%esp)
  289:	e8 14 04 00 00       	call   6a2 <semget>
-      productor(val); // 10
+      productor(val); 
  28e:	8b 44 24 18          	mov    0x18(%esp),%eax
  292:	89 04 24             	mov    %eax,(%esp)
  295:	e8 66 fd ff ff       	call   0 <productor>
@@ -296,7 +295,7 @@ main(void)
  335:	00 
  336:	89 04 24             	mov    %eax,(%esp)
  339:	e8 64 03 00 00       	call   6a2 <semget>
-      consumidor(val); // 20
+      consumidor(val); 
  33e:	8b 44 24 18          	mov    0x18(%esp),%eax
  342:	89 04 24             	mov    %eax,(%esp)
  345:	e8 38 fd ff ff       	call   82 <consumidor>
@@ -309,13 +308,13 @@ main(void)
     }
   }
 
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 wait
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 
  35e:	c7 44 24 1c 00 00 00 	movl   $0x0,0x1c(%esp)
  365:	00 
  366:	eb 09                	jmp    371 <main+0x26d>
     wait();
  368:	e8 7d 02 00 00       	call   5ea <wait>
-  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 wait
+  for (i = 0; i < PRODUCERS + CONSUMERS; i++) { // 6 
  36d:	ff 44 24 1c          	incl   0x1c(%esp)
  371:	83 7c 24 1c 05       	cmpl   $0x5,0x1c(%esp)
  376:	7e f0                	jle    368 <main+0x264>

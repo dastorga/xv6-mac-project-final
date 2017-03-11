@@ -233,7 +233,7 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   uint a;
 
   if(newsz >= KERNBASE)
-    return 0;
+    return 0; // error
   if(newsz < oldsz)
     return oldsz;
 
@@ -245,7 +245,7 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       deallocuvm(pgdir, newsz, oldsz);
       return 0;
     }
-    memset(mem, 0, PGSIZE);
+    memset(mem, 0, PGSIZE); // seteo el espacio con 0
     mappages(pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W|PTE_U);
   }
   return newsz;
