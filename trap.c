@@ -103,13 +103,13 @@ trap(struct trapframe *tf)
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   if(proc && proc->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER && ++(proc->ticksProc) == QUANTUM) {
-      // New: Added in proyect 0
-      // cprintf("tamaño del quantum: %d\n", QUANTUM);
-      // cprintf("cantidad de ticks del proceso: %d\n", proc->ticksProc);
-      // cprintf("nombre del proceso: %s\n", proc->name);
-      // cprintf("abandone cpu\n");
+    // New: Added in proyect 0
+    // cprintf("tamaño del quantum: %d\n", QUANTUM);
+    // cprintf("cantidad de ticks del proceso: %d\n", proc->ticksProc);
+    // cprintf("nombre del proceso: %s\n", proc->name);
+    // cprintf("abandone cpu\n");
 
-      yield();
+    yield();
   }
 
   // Check if the process has been killed since we yielded
