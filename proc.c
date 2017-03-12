@@ -347,7 +347,7 @@ wait(void)
 
     // Wait for children to exit.  (See wakeup1 call in proc_exit.)
     sleep(proc, &ptable.lock);  //DOC: wait-sleep
-  } // manda al proceso corriente a esperar
+  } // manda al proceso corriente a dormir
 }
 
 //PAGEBREAK: 42

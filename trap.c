@@ -36,8 +36,8 @@ idtinit(void)
 void
 trap(struct trapframe *tf)
 {
-  if(tf->trapno == T_SYSCALL){
-    if(proc->killed)
+  if(tf->trapno == T_SYSCALL){ // El código de usuario hace una llamada de sistema con INT T_SYSCALL.
+    if(proc->killed) // si el proceso esta muerto
       exit();
     proc->tf = tf;
     syscall();
@@ -108,6 +108,7 @@ trap(struct trapframe *tf)
       // cprintf("cantidad de ticks del proceso: %d\n", proc->ticksProc);
       // cprintf("nombre del proceso: %s\n", proc->name);
       // cprintf("abandone cpu\n");
+
       yield();
   }
 
