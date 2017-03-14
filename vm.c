@@ -54,9 +54,9 @@ walkpgdir(pde_t *pgdir, const void *va, int alloc)
   pde_t *pde;
   pte_t *pgtab;
 
-  pde = &pgdir[PDX(va)];
+  pde = &pgdir[PDX(va)]; // PDX: me da el indice del directorio de páginas
   if(*pde & PTE_P){
-    pgtab = (pte_t*)p2v(PTE_ADDR(*pde));
+    pgtab = (pte_t*)p2v(PTE_ADDR(*pde)); // PTE_ADDR: entrada en el directorio de pagina
   } else {
     if(!alloc || (pgtab = (pte_t*)kalloc()) == 0) // kalloc es 0 cuando no puede asignar la memoria.
       return 0;
@@ -66,7 +66,7 @@ walkpgdir(pde_t *pgdir, const void *va, int alloc)
     // be further restricted by the permissions in the page table 
     // entries, if necessary.
     *pde = v2p(pgtab) | PTE_P | PTE_W | PTE_U;
-  }
+  }                         // PTX: entrada en la tabla de pagina
   return &pgtab[PTX(va)]; // PTX (va) me retorna un index de la tabla de pagina, que luego aplicando, &pgtab[..] me retorna su direccion. 
 }                         // por lo tanto , la direccion del index, de la tabla de paginas.
 
