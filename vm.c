@@ -282,8 +282,8 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       if (!save_this){ // New: Add in project final, ahi uno solo, le aplico el kfree
         char *v = p2v(pa);
         kfree(v);
-        *pte = 0;
       }
+      *pte = 0;
     }
   }
   return newsz;

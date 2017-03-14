@@ -8,13 +8,7 @@
 #include "spinlock.h"
 #include "sharedmem.h"
 
-// "shmtable" contiene:
-// struct {
-//   struct sharedmemory sharedmemory[MAXSHM]; // array from type sharedmemory
-//   struct spinlock lock;
-//   unsigned short quantity; //quantity of actives espaces of shared memory
-// } shmtable;
-
+// Initialization of shmtable.sharedmemory[i].refcount
 int
 shm_init()
 {

@@ -432,6 +432,7 @@ sched(void)
 }
 
 // Give up the CPU for one scheduling round.
+// pone al prceso en estad listo y llama al scheduler
 void
 yield(void)
 {
