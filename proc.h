@@ -71,9 +71,11 @@ struct proc {
   struct proc *next;                // New: Added in project 2: pointer to next proc 
   struct sem *procsem[MAXSEMPROC];  // New: Add in project 3: list of semaphores used for this process
   int semquantity;                  // New: Add in project 3: quantity of semaphores in this process
-  //int shmem[MAXSHMPROC];          // New: Added in project final: spaces of shared memory used for this process 
-  char* shmref[MAXSHMPROC];         // New: Added in project final: references of shared memory used for this process
+
   int shmemquantity;                // New: Added in project final: quantity of spaces in shared memory 
+  char* shmref[MAXSHMPROC];         // New: Added in project final: references of shared memory used for this process
+  int shmem[MAXSHMPROC];            // New: Added in project final: spaces of shared memory used for this process 
+  char* addrultima;                 // ultima pagina of shared memory assigned
 };
 
 // Process memory is laid out contiguously, low addresses first:
@@ -81,3 +83,12 @@ struct proc {
 //   original data and bss
 //   fixed-size stack
 //   expandable heap
+
+
+
+
+
+
+
+
+

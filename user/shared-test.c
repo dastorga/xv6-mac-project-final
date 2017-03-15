@@ -78,21 +78,104 @@ test(){
   printf(1,"exit *(index)= %d  \n" , *(index) );
 }
 
+// void
+// test_3(){
+//   int a;
+//   int k;
+//   char* mem= 0;
+//   *mem = (int)8; 
+//   k = shm_create();  
+//   printf(1,"salida shm_create %d  \n" , k); // indice creado en k
+
+//   shm_get(k,&mem);  
+//   a = shm_close(k);
+
+//   printf(1,"salida shm_close %d  \n" , a);
+//   exit();
+// }
+
 void
 test_4(){
-  int a;
-  int k;
-  char* mem= 0;
-  *mem = (int)8; 
-  k = shm_create();  // creo espacio de memoria que sera para compartir
-  printf(1,"salida shm_create %d  \n" , k);
+  int key1, key2; 
+  int salida1, salida2;
+  int res1, res2;
 
-  shm_get(k,&mem);  // mapeo el espacio 
-  a = shm_close(k);
+  key1 = shm_create(); 
+  char* index= 0;
+  salida1 = shm_get(key1,&index); //get a shared memory 
+  printf(1,"salida shm_create 1 %d  \n" , salida1);
+  *index = (int)8; 
 
-  printf(1,"salida shm_close %d  \n" , a);
+  
+  salida2 = key2 = shm_create(); 
+  printf(1,"salida shm_create 2 %d  \n" , salida2);
+  char* array= 0;
+  shm_get(key2,&array); 
+
+  
+  res1 = shm_close(key1);
+  printf(1,"salida shm_close 1 %d  \n" , res1);
+  res2 = shm_close(key2);
+  printf(1,"salida shm_close 2 %d  \n" , res2);
   exit();
 }
+
+void
+test_5(){
+  int key1, key2; 
+  int salida1, salida2;
+  int res1, res2;
+
+  key1 = shm_create();
+  printf(1,"salida primer shm_create %d  \n" , key1); 
+  char* index= 0;
+  salida1 = shm_get(key1,&index); //get a shared memory 
+  printf(1,"salida shm_get  %d  \n" , salida1); 
+  *index = (int)8; 
+
+  printf(1,"************************************\n"); 
+
+  key2 = shm_create(); 
+  printf(1,"salida segundo shm_create  %d  \n" , key2);
+  char* array= 0;
+  salida2 = shm_get(key2,&array); 
+  printf(1,"salida shm_get  %d  \n" , salida2);
+
+  printf(1,"************************************\n"); 
+  
+  res1 = shm_close(key1);
+  printf(1,"salida shm_close 1 %d  \n" , res1);
+  res2 = shm_close(key2);
+  printf(1,"salida shm_close 2 %d  \n" , res2);
+  exit();
+}
+
+
+void
+test_6(){
+  int key1; 
+  int salida1;
+  int res1;
+
+  key1 = shm_create();
+  printf(1,"respuest del primer shm_create: %d  \n" , key1); 
+  char* index= 0;
+  salida1 = shm_get(key1,&index); //get a shared memory 
+  printf(1,"respuesta del shm_get:  %d  \n" , salida1); 
+  *index = (int)8; 
+
+  printf(1,"************************************\n"); 
+  
+  res1 = shm_close(key1);
+  printf(1,"respuesta del shm_close:  %d  \n" , res1);
+
+  printf(1,"cierro otra vez el mismo q ya cerre\n"); 
+  res1 = shm_close(key1);
+  printf(1,"respuesta del shm_close ante haber cerrado anteriormente lo mismo:  %d  \n" , res1);
+
+  exit();
+}
+
 
 int
 main(int argc, char *argv[]) {
@@ -100,7 +183,10 @@ main(int argc, char *argv[]) {
   // test_0();
   // test_1();
   // test();
+  // test_3();
   // test_4();
+  // test_5();
+  // test_6();
  
   // int pid;
   // int keyIndex;

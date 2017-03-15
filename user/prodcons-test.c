@@ -1,8 +1,4 @@
 // Ejemplo de Productor consumidor.
-//
-// Recordar: 
-// * acceso al contenido
-// & obtension de la direccion
 
 #include "types.h"
 #include "user.h"

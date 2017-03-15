@@ -30,9 +30,9 @@ shm_create()
     return -1;                      // no ahi mas espacios de memoria compartida, se fueron los 12 espacios que habia.
   }
   int i = 0;
-  while (i<MAXSHM){ // busco el primer espacio desocupado
+  while (i<MAXSHM){ 
     if (shmtable.sharedmemory[i].refcount == -1){ // si es -1, esta desocupado el espacio.
-      shmtable.sharedmemory[i].addr = kalloc(); // El "kalloc" asigna una pagina de 4096 bytes de memoria fisica.                                      
+      shmtable.sharedmemory[i].addr = kalloc(); // El "kalloc" me retorna dirección virtual en modo kernel                                      
       memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
       shmtable.sharedmemory[i].refcount++; 
       shmtable.quantity++; 
@@ -55,7 +55,7 @@ shm_close(int key)
     return -1; 
   }
   int i = 0;
-  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ 
+  while (i<MAXSHMPROC && proc->shmem[i] != key){ 
     i++; 
   }
   if (i == MAXSHMPROC){ 
@@ -63,6 +63,7 @@ shm_close(int key)
     return -1; 
   }  
   proc->shmemquantity--; // decrement quantity of spaces in shared memory  
+  proc->shmem[i] = -1;
   shmtable.sharedmemory[key].refcount--; // decrement quantity of references
   if (shmtable.sharedmemory[key].refcount == 0){ 
     shmtable.sharedmemory[key].refcount = -1; 
@@ -84,20 +85,22 @@ shm_get(int key, char** addr)
     return -1; // key invalida, debido a que esta fuera de los indices la key.
   }  
   int i = 0;
-  while (i<MAXSHMPROC && proc->shmref[i] != 0 ){ // existe una referencia
+  while (i<MAXSHMPROC && proc->shmem[i] != -1 ){ 
     i++;
   }
   if (i == MAXSHMPROC ){ 
     release(&shmtable.lock); 
     return -1; // no ahi mas recursos disponibles (esp. de memoria compartida) por este proceso.
-  } else {          
-    j = mappages(proc->pgdir, (void *)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
-    if (j==-1) { cprintf("mappages error \n"); }
-    proc->shmref[i] = shmtable.sharedmemory[key].addr; 
-    shmtable.sharedmemory[key].refcount++; 
-    *addr = (char *)PGROUNDDOWN(proc->sz); 
+  } else {   
+    shmtable.sharedmemory[key].refcount++;
+    proc->shmem[i]=key;
     proc->shmemquantity++;
-    proc->sz = proc->sz + PGSIZE; // actualizo el tamaño de la memoria del proceso, debido a que ya se realizo el mapeo
+
+    j = mappages(proc->pgdir, (void*)PGROUNDDOWN(proc->sz), PGSIZE, v2p(shmtable.sharedmemory[i].addr), PTE_W|PTE_U);
+    if (j==-1) { cprintf("mappages error \n"); }
+    proc->shmref[i] = (char*)PGROUNDDOWN(proc->sz);
+    *addr = (char*)PGROUNDDOWN(proc->sz); 
+    proc->sz = proc->sz + PGSIZE;
     release(&shmtable.lock);
     return 0; 
   }   
@@ -107,3 +110,4 @@ shm_get(int key, char** addr)
 struct sharedmemory* get_shm_table(){
   return shmtable.sharedmemory; // como resultado, mi arreglo principal sharedmemory 
 }
+

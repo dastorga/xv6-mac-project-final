@@ -234,10 +234,16 @@ fork(void)
  
   pid = np->pid;
 
-  // Init array of sharedmem
+  //init array of sharedmem
   for (i = 0; i < MAXSHMPROC; i++){
-    np->shmref[i] = 0;
+    np->shmem[i] = -1;
   }
+  // np->addrultima = (char*)PGROUNDDOWN(np->sz); // New: Added in project final:
+
+  // // Init array of sharedmem
+  // for (i = 0; i < MAXSHMPROC; i++){
+  //   np->shmref[i] = 0;
+  // }
 
   // np->state = RUNNABLE;
   makerunnable(np,0); // New: Added in proyect 2: every process enqueued is RUNNABLE.
@@ -272,20 +278,19 @@ exit(void)
       semfree(proc->procsem[sd] - getstable());
     }
   }
-
-  proc->shmemquantity = 0;
   proc->semquantity = 0;
 
-  begin_trans(); //add hoy dario, no estoy seguro // begin_op en linux creo
+  begin_trans(); //add hoy dario,  // begin_op en linux creo
   iput(proc->cwd);
-  commit_trans(); //add hoy dario, no estoy seguro
+  commit_trans(); //add hoy dario, 
   proc->cwd = 0;
 
-  // Free shared memory
+  //release all the sharedmem.
   for(i = 0; i < MAXSHMPROC; i++){
-    if (proc->shmref[i] != 0){}
-      shm_close(i);
+    if (proc->shmem[i] != -1) 
+      shm_close(proc->shmem[i]);
   }
+  proc->shmemquantity = 0;
 
   acquire(&ptable.lock);
 

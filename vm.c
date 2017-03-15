@@ -286,8 +286,9 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   return newsz;
 }
 
+// unmap:
 // if freeframes is zero, free the memory.
-// unmap the range [va, va + size]
+// range [va, va + size] logical address of a process.
 int 
 unmap(pde_t *pgdir, void *va, uint size, int freeframes)
 {
