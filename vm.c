@@ -233,7 +233,7 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   uint a;
 
   if(newsz >= KERNBASE)
-    return 0; // error
+    return 0; 
   if(newsz < oldsz)
     return oldsz;
 
@@ -276,10 +276,7 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
       save_this = is_shared(pa); //New: Add in project final
       if(pa == 0)
         panic("kfree");
-      // char *v = p2v(pa);
-      // kfree(v);
-      // *pte = 0;
-      if (!save_this){ // New: Add in project final, ahi uno solo, le aplico el kfree
+      if (!save_this){ // New: Add in project final.
         char *v = p2v(pa);
         kfree(v);
       }
@@ -287,6 +284,31 @@ deallocuvm(pde_t *pgdir, uint oldsz, uint newsz)
     }
   }
   return newsz;
+}
+
+// if freeframes is zero, free the memory.
+// unmap the range [va, va + size]
+int 
+unmap(pde_t *pgdir, void *va, uint size, int freeframes)
+{
+  pte_t *pte;
+  uint a, pa;
+  a = PGROUNDUP((uint)va);
+  for(; a < (uint)va+size; a += PGSIZE){
+    pte = walkpgdir(pgdir, (char*)a, 0);
+    if(!pte) a += (NPTENTRIES - 1) * PGSIZE;
+    else if((*pte & PTE_P) != 0){
+      pa = PTE_ADDR(*pte);
+      if(pa == 0)
+        panic("kfree unmappages");
+      if (freeframes == 0){
+        char *v = p2v(pa);
+        kfree (v);
+      }
+      *pte = 0;
+    } 
+  }
+  return 0;
 }
 
 // Free a page table and all the physical memory pages
@@ -403,7 +425,6 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
   return 0;
 }
 
-
 // struct sharedmemory* get_shm_table(){
 //   return shmtable.sharedmemory; // obtengo array sharedmemory de tipo sharedmemory
 // }
@@ -422,6 +443,5 @@ is_shared(uint pa){
   }
   return shared; // ahi uno solo
 }
-
 
 

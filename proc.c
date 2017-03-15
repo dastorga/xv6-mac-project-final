@@ -190,8 +190,8 @@ growproc(int n) // incrementa la memoria del proceso corriente "n" bytes.
   sz = proc->sz; // guardo en sz la memoria actual del proceso
   if(n > 0){ // si el n es positivo y mayor a cero, es por que se quiere agrandar la memoria.
     if((sz = allocuvm(proc->pgdir, sz, sz + n)) == 0) // allocuvm, me retorna el numero tamaño de memoria del proceso si todo salio bien
-      return -1; // error                             // el allocuvm va hacer crecer el tamaño de la memoria delproceso
-  } else if(n < 0){ // si el n es nagativo, es por que se quiere achicar la memoria del proceso corriente.
+      return -1; // error                             // el allocuvm va hacer crecer el tamaño de la memoria del proceso
+  } else if(n < 0){ 
     if((sz = deallocuvm(proc->pgdir, sz, sz + n)) == 0) 
       return -1; // error                      
   }
