@@ -34,7 +34,7 @@ shm_create()
     if (shmtable.sharedmemory[i].refcount == -1){ // si es -1, esta desocupado el espacio.
       shmtable.sharedmemory[i].addr = kalloc(); // El "kalloc" asigna una pagina de 4096 bytes de memoria fisica.                                      
       memset(shmtable.sharedmemory[i].addr, 0, PGSIZE); 
-      shmtable.sharedmemory[i].refcount++; // Incremento el refcount en una unidad, estaba en -1, ahora en 0, inicialmente.
+      shmtable.sharedmemory[i].refcount++; 
       shmtable.quantity++; 
       release(&shmtable.lock);
       return i; 
@@ -55,7 +55,7 @@ shm_close(int key)
     return -1; 
   }
   int i = 0;
-  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ // para poder buscar donde se encuentra
+  while (i<MAXSHMPROC && (proc->shmref[i] != shmtable.sharedmemory[key].addr)){ 
     i++; 
   }
   if (i == MAXSHMPROC){ 
